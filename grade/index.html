@@ -83,6 +83,23 @@ table.week tr.gap td,table.week tr.gap th{height:6px;background:none;padding:0}
 .nodata{padding:28px 16px;color:var(--muted);text-align:center}
 .legend2{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);padding:10px 16px 0}
 .legend2 span{display:inline-flex;align-items:center;gap:6px}
+.rec-btn{display:inline-flex;align-items:center;gap:8px}
+.rec-btn svg{width:16px;height:16px}
+.opt-row{display:flex;flex-direction:column;gap:8px}
+.opt-row .lbl2{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.chk{display:flex;flex-wrap:wrap;gap:8px}
+.chk label{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:14px;font-weight:600;cursor:pointer;background:var(--bg)}
+.chk input{accent-color:var(--lime);width:16px;height:16px}
+.rec-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.rec-list li{border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--bg);display:grid;grid-template-columns:12px minmax(0,1fr);gap:4px 10px}
+.rec-list .sw2{width:12px;height:12px;border-radius:3px;margin-top:4px}
+.rec-list b{font-weight:700}
+.rec-list small{grid-column:2;color:var(--muted);font-size:12.5px}
+.rec-list .why{grid-column:2;font-size:12.5px;color:var(--ink)}
+.rec-left li{border-style:dashed}
+.rec-sum{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13.5px;color:var(--muted)}
+.rec-sum b{color:var(--ink);font-family:var(--f-disp);font-size:20px;margin-right:4px}
+.rec-acts{display:flex;flex-wrap:wrap;gap:8px}
 @media (max-width:1000px){.gmain{grid-template-columns:minmax(0,1fr)}.gcol.right{order:-1}}
 </style>
 
@@ -100,6 +117,7 @@ table.week tr.gap td,table.week tr.gap th{height:6px;background:none;padding:0}
         <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         <input id="q" type="search" placeholder="Buscar disciplina, código ou professor(a) em todos os cursos" autocomplete="off" aria-label="Buscar disciplina">
       </label>
+      <button class="btn primary rec-btn" type="button" id="rec-open"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l1.7 4.3 4.3 1.7-4.3 1.7L8 13.5l-1.7-4.3L2 7.5l4.3-1.7z" fill="currentColor"/></svg>Recomendar grade</button>
     </div>
   </div>
 </header>
@@ -122,6 +140,12 @@ table.week tr.gap td,table.week tr.gap th{height:6px;background:none;padding:0}
   </section>
 </div>
 
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="rec" role="dialog" aria-modal="true" aria-labelledby="rec-title" hidden>
+  <div class="dh"><div class="t"><div class="code">Recomendação</div><h2 id="rec-title">Grade sugerida</h2><div class="kind">Montada a partir do seu histórico e das turmas abertas</div></div>
+  <button class="xbtn" id="rec-close" type="button" aria-label="Fechar recomendação"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+  <div class="db" id="rec-body"></div>
+</aside>
 <script src="/assets/config.js"></script>
 <script>
 (function(){
@@ -271,6 +295,122 @@ $('#copy').addEventListener('click',async()=>{
   try{await navigator.clipboard.writeText(txt);$('#copy').textContent='Lista copiada';}catch(e){$('#copy').textContent='Não consegui copiar';}
   setTimeout(()=>$('#copy').textContent='Copiar lista para a matrícula',2000);
 });
+/* ---------- recomendação de grade ---------- */
+const recOpts={turnos:{M:true,T:true,N:false},max:24,opt:true,cur:true};
+let recBanned=[],recLast=null;
+function turmaInfo(c,t){const x=DATA.disc[c].t[t];const cells=x.h.map(parseH).filter(Boolean);return {x,cells,aulas:cells.length||(DATA.disc[c].ap+DATA.disc[c].aa)};}
+function candidatesFor(codes,meta){
+  const cursoN=norm(H&&H.curso||'');
+  return codes.filter(c=>DATA.disc[c]).map(c=>{
+    const opts=Object.keys(DATA.disc[c].t).map(t=>{const {x,cells}=turmaInfo(c,t);
+      let sc=0;const outT=cells.filter(z=>!recOpts.turnos[z.s[0]]).length;sc-=outT*4;
+      const pri=(x.p||[]).some(p=>norm(p).includes(cursoN))&&cursoN;if(pri)sc+=5;else if(/fechad/i.test(x.r||''))sc-=12;
+      if(!cells.length&&x.e&&/ead/i.test(x.e))sc+=1;
+      return {k:turmaKey(c,t),c,t,cells:cells.map(z=>z.d+z.s),aulas:cells.length||DATA.disc[c].ap,sc,outT,pri,closed:/fechad/i.test(x.r||'')&&!pri};});
+    return Object.assign({c,opts},meta);
+  });
+}
+function recommend(){
+  const pend=(H.pend||[]).filter(p=>recOpts.cur||p.st!=='cur');
+  const needs=[];
+  pend.forEach(p=>{const codes=[p.c].concat(Object.keys(H.equiv||{}).filter(e=>H.equiv[e]===p.c)).filter(c=>DATA.disc[c]);
+    if(!codes.length)return;
+    const w=100+Math.max(0,10-(p.p||10))*6+Math.min(p.fails||0,3)*4;
+    needs.push({target:p.c,name:p.n,period:p.p,st:p.st,w,alts:candidatesFor(codes,{})});});
+  const notOffered=pend.filter(p=>!needs.some(n=>n.target===p.c));
+  needs.sort((a,b)=>b.w-a.w);
+  // busca exata nas obrigatórias (escolhe no máximo uma turma por pendência)
+  let best=null,nodes=0;
+  const sig=sel=>sel.map(o=>o.k).sort().join(',');
+  function dfs(i,used,aulas,sel,score){
+    if(++nodes>250000)return;
+    if(i===needs.length){if(!best||score>best.score){const s=sig(sel);if(!recBanned.includes(s))best={score,sel:sel.slice(),aulas,used:new Set(used)};}return;}
+    let rest=0;for(let j=i;j<needs.length;j++)rest+=needs[j].w+8;
+    if(best&&score+rest<=best.score)return;
+    const n=needs[i];
+    const opts=n.alts.flatMap(a=>a.opts).sort((a,b)=>b.sc-a.sc);
+    for(const o of opts){
+      if(aulas+o.aulas>recOpts.max)continue;
+      if(o.cells.some(z=>used.has(z)))continue;
+      o.cells.forEach(z=>used.add(z));sel.push(Object.assign({need:n},o));
+      dfs(i+1,used,aulas+o.aulas,sel,score+n.w+o.sc);
+      sel.pop();o.cells.forEach(z=>used.delete(z));
+    }
+    dfs(i+1,used,aulas,sel,score);
+  }
+  dfs(0,new Set(),0,[],0);
+  if(!best)best={score:0,sel:[],aulas:0,used:new Set()};
+  const picks=best.sel.slice();const used=new Set(best.used);let aulas=best.aulas;
+  // optativas para completar a carga que falta
+  const optAdded=[];
+  let optNeed=(H.conj||[]).reduce((a,c)=>a+Math.max(0,c.rem||0),0);
+  if(recOpts.opt&&optNeed>0&&H.matriz){
+    const taken=new Set(picks.map(p=>p.c));const pendCodes=new Set((H.pend||[]).map(p=>p.c));
+    const cand=Object.keys(DATA.disc).filter(c=>!taken.has(c)&&!pendCodes.has(c)&&!(H.done||[]).includes(c)&&Object.values(DATA.disc[c].t).some(t=>(t.opt||[]).includes(String(H.matriz))));
+    const inGroup=new Set((H.conj||[]).flatMap(c=>c.codes||[]));
+    const curso=DATA.cursos.find(x=>x.cod===+$('#curso').value);const fromCourse=new Set(curso?curso.disc:[]);
+    const all=candidatesFor(cand,{}).flatMap(a=>a.opts.map(o=>Object.assign({},o,{sc:o.sc+(fromCourse.has(o.c)?6:0)+(/^pv/i.test(DATA.disc[o.c].n)?3:0)}))).sort((a,b)=>b.sc-a.sc);
+    const done=new Set();
+    for(const o of all){
+      if(optNeed<=0)break;if(done.has(o.c))continue;
+      if(aulas+o.aulas>recOpts.max)continue;if(o.cells.some(z=>used.has(z)))continue;
+      if(o.outT>0)continue;
+      o.cells.forEach(z=>used.add(z));aulas+=o.aulas;done.add(o.c);
+      const ch=(DATA.disc[o.c].ap+DATA.disc[o.c].aa)*15;optNeed-=ch;optAdded.push(Object.assign({opt:true},o));
+    }
+  }
+  const left=needs.filter(n=>!picks.some(p=>p.need===n)).map(n=>{
+    const opts=n.alts.flatMap(a=>a.opts);
+    const fits=opts.filter(o=>!o.cells.some(z=>used.has(z)));
+    const why=!opts.length?'Sem turmas':fits.length&&aulas+fits[0].aulas>recOpts.max?'Passaria do limite de aulas por semana':'Todas as turmas chocam com outras escolhas';
+    return {c:n.target,n:n.name,why};});
+  return {picks,optAdded,left,notOffered,aulas,optNeedLeft:Math.max(0,optNeed)};
+}
+function renderRec(){
+  const b=$('#rec-body');
+  if(!H){b.innerHTML='<p class="dlead">Para recomendar uma grade eu preciso saber o que falta no seu curso.</p><a class="btn primary" href="/historico/">Ler meu histórico</a>';return;}
+  const t=recOpts.turnos;
+  let h=`<div class="opt-row"><span class="lbl2">Turnos que você pode</span><div class="chk">${[['M','Manhã'],['T','Tarde'],['N','Noite']].map(([k,l])=>`<label><input type="checkbox" data-turno="${k}"${t[k]?' checked':''}>${l}</label>`).join('')}</div></div>
+  <div class="opt-row"><span class="lbl2">Máximo de aulas por semana</span><select id="rec-max">${[12,16,20,24,28,32].map(n=>`<option${n===recOpts.max?' selected':''}>${n}</option>`).join('')}</select></div>
+  <div class="opt-row"><div class="chk"><label><input type="checkbox" id="rec-cur"${recOpts.cur?' checked':''}>Incluir o que já estou cursando</label><label><input type="checkbox" id="rec-opt"${recOpts.opt?' checked':''}>Completar com optativas</label></div></div>`;
+  const r=recLast;
+  if(r){
+    const all=r.picks.concat(r.optAdded);
+    if(!all.length)h+=`<div class="dnote">Nenhuma combinação coube nesses filtros. Tente liberar outro turno ou aumentar o limite de aulas.</div>`;
+    else{
+      h+=`<div class="rec-sum"><span><b>${all.length}</b>${all.length===1?'disciplina':'disciplinas'}</span><span><b>${r.aulas}</b>aulas por semana</span><span><b>0</b>choques</span></div>`;
+      h+=`<ul class="rec-list">${all.map((o,i)=>{const d=DATA.disc[o.c];const x=d.t[o.t];
+        const why=o.opt?'Optativa válida na sua matriz':o.need.st==='cur'?'Você está cursando agora':`Obrigatória pendente${o.need.period?' do '+o.need.period+'º período':''}`+(o.c!==o.need.target?` (equivalente a ${o.need.target})`:'');
+        const notes=[o.pri?'prioridade para o seu curso':'',o.closed?'reserva fechada para outros cursos: vaga incerta':'',o.outT?'tem aulas fora dos turnos escolhidos':''].filter(Boolean).join(' · ');
+        return `<li><span class="sw2" style="background:${PAL[i%PAL.length]}"></span><span><b>${esc(o.c)} ${esc(o.t)}</b> · ${esc(d.n)}</span><span class="why">${esc(why)}</span><small>${esc(fmtWhen(x.h))} · ${esc(profOf(x)||'professor(a) a definir')}${notes?' · '+esc(notes):''}</small></li>`;}).join('')}</ul>`;
+      h+=`<div class="rec-acts"><button class="btn primary" type="button" id="rec-apply">Usar esta grade</button><button class="btn ghost" type="button" id="rec-other">Ver outra opção</button></div>`;
+    }
+    if(r.left.length||r.notOffered.length||r.optNeedLeft){
+      h+=`<div class="dsec"><h3>Ficou de fora</h3><ul class="rec-list rec-left">${r.left.map(x=>`<li><span></span><span><b>${esc(x.c)}</b> · ${esc(x.n)}</span><small>${esc(x.why)}</small></li>`).join('')}${r.notOffered.map(p=>`<li><span></span><span><b>${esc(p.c)}</b> · ${esc(p.n)}</span><small>${/estagio|complementar|atividade/i.test(norm(p.n))?'Não tem turma: é uma atividade, não aparece no relatório':'Sem turma aberta neste semestre'}</small></li>`).join('')}${r.optNeedLeft?`<li><span></span><span><b>Optativas</b></span><small>Ainda faltariam cerca de ${Math.round(r.optNeedLeft)} h de optativas</small></li>`:''}</ul></div>`;
+    }
+    h+=`<p class="comp-note">A recomendação prioriza obrigatórias dos primeiros períodos e as que você já reprovou, evita choques e prefere turmas com prioridade para o seu curso. Ela não conhece pré-requisitos; confira no Portal antes de se matricular.</p>`;
+  }else h+=`<button class="btn primary" type="button" id="rec-run">Gerar recomendação</button>`;
+  b.innerHTML=h;
+}
+function runRec(){recLast=recommend();renderRec();}
+let recFocus=null;
+$('#rec-open').addEventListener('click',e=>{recFocus=e.currentTarget;recBanned=[];recLast=H&&DATA?recommend():null;renderRec();$('#rec').hidden=false;$('#scrim').hidden=false;document.body.style.overflow='hidden';$('#rec-close').focus();});
+function closeRec(){if($('#rec').hidden)return;$('#rec').hidden=true;$('#scrim').hidden=true;document.body.style.overflow='';PREV=null;renderGrid();if(recFocus)recFocus.focus();}
+$('#rec-close').addEventListener('click',closeRec);$('#scrim').addEventListener('click',closeRec);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRec();});
+$('#rec').addEventListener('change',e=>{
+  const tn=e.target.dataset.turno;if(tn)recOpts.turnos[tn]=e.target.checked;
+  if(e.target.id==='rec-max')recOpts.max=+e.target.value;
+  if(e.target.id==='rec-cur')recOpts.cur=e.target.checked;
+  if(e.target.id==='rec-opt')recOpts.opt=e.target.checked;
+  recBanned=[];runRec();
+});
+$('#rec').addEventListener('click',e=>{
+  if(e.target.id==='rec-run'){runRec();}
+  if(e.target.id==='rec-other'&&recLast){recBanned.push(recLast.picks.map(o=>o.k).sort().join(','));runRec();}
+  if(e.target.id==='rec-apply'&&recLast){SEL=recLast.picks.concat(recLast.optAdded).map(o=>o.k);store.set(KEY,SEL);renderList();renderGrid();closeRec();}
+});
+
 load();
 })();
 </script>
