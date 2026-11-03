@@ -1262,7 +1262,7 @@ async function readPdf(file){
     const info=` <br><small style="opacity:.7">Arquivo recebido: “${esc(file.name||'sem nome')}”, ${(u8.length/1024).toFixed(1)} KB, tipo “${esc(file.type||'não informado')}”.</small>`;
     const t=head.slice(0,400).replace(/^\uFEFF|^\s+/,'').toLowerCase();
     let msg;
-    if(!u8.length)msg='<b>O arquivo chegou vazio.</b> Isso acontece no celular quando o PDF é escolhido direto do Google Drive, WhatsApp ou de outro app. Baixe o PDF para o aparelho (pasta Downloads ou Arquivos) e escolha de lá.';
+    if(!u8.length)msg='<b>O arquivo chegou vazio.</b> Tente de novo escolhendo o PDF pela pasta Downloads ou Arquivos do aparelho. Se você abriu o site por um link dentro do WhatsApp ou Instagram, abra no Chrome ou no Safari: o navegador desses apps às vezes entrega o arquivo vazio.';
     else if(t.startsWith('<')||t.indexOf('<html')>=0||t.indexOf('<!doctype')>=0)msg='<b>Esse arquivo é uma página da web salva, não um PDF.</b> No celular, abra o histórico no portal, use o menu do navegador e escolha <b>Compartilhar → Imprimir</b> (Android) ou <b>Compartilhar → Imprimir → Salvar em Arquivos</b> (iPhone), e salve como PDF.';
     else if(u8[0]===0x89&&u8[1]===0x50)msg='<b>Esse arquivo é uma imagem PNG (print de tela), não um PDF.</b> Gere o PDF pelo botão “Imprimir” do histórico e escolha “Salvar como PDF”.';
     else if(u8[0]===0xFF&&u8[1]===0xD8)msg='<b>Esse arquivo é uma foto (JPG), não um PDF.</b> Gere o PDF pelo botão “Imprimir” do histórico e escolha “Salvar como PDF”.';
@@ -1289,7 +1289,7 @@ async function readPdf(file){
   try{status('',null);location.hash='resumo';load(data,false);}
   catch(e){goUpload();status('err','<b>Li o histórico, mas algo falhou ao montar a análise.</b> Me envie essa mensagem para eu corrigir.'+errDet(e));}
 }
-$('#file').addEventListener('change',e=>{readPdf(e.target.files[0]);e.target.value='';});
+$('#file').addEventListener('change',async e=>{const inp=e.target;const f=inp.files&&inp.files[0];try{await readPdf(f);}finally{try{inp.value='';}catch(_){}}});
 const drop=$('#drop');
 ['dragenter','dragover'].forEach(t=>document.addEventListener(t,e=>{if(e.dataTransfer&&[...e.dataTransfer.types].includes('Files')){e.preventDefault();drop.classList.add('over');}}));
 ['dragleave','drop'].forEach(t=>document.addEventListener(t,e=>{if(t==='dragleave'&&e.relatedTarget)return;drop.classList.remove('over');}));
