@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>UTFPR sem confusão</title>
-<meta name="description" content="Ferramentas para estudantes da UTFPR Curitiba: leitor de histórico escolar, montagem de grade do semestre e projetos de extensão ativos.">
+<title>Histórico · UTFPR sem confusão</title>
+<meta name="description" content="Envie o PDF do Histórico Escolar do Portal do Aluno da UTFPR e veja progresso, pendências, mapa da matriz e todas as tentativas.">
 <meta name="theme-color" content="#0A0A0A">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230A0A0A'/%3E%3Cg fill='%23C9F22C'%3E%3Crect x='42' y='14' width='16' height='72' rx='8'/%3E%3Crect x='42' y='14' width='16' height='72' rx='8' transform='rotate(60 50 50)'/%3E%3Crect x='42' y='14' width='16' height='72' rx='8' transform='rotate(120 50 50)'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,96 +13,975 @@
 <link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
+
+
+<!-- ============ TELA DE ENVIO ============ -->
 <nav class="topnav" aria-label="Site"><div class="wrap in">
   <a class="brand" href="/"><svg viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor"><rect x="41" y="4" width="18" height="92" rx="9"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(60 50 50)"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(120 50 50)"/></g></svg><span>UTFPR sem confusão</span><small>Curitiba</small></a>
-  <div class="navlinks"><a href="/" aria-current="page">Início</a><a href="/historico/">Histórico</a><a href="/grade/">Montar grade</a><a href="/extensao/">Extensão</a></div>
+  <div class="navlinks"><a href="/">Início</a><a href="/historico/" aria-current="page">Histórico</a><a href="/grade/">Montar grade</a><a href="/extensao/">Extensão</a></div>
 </div></nav>
-<style>
-.home-hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
-.home-hero .wrap{padding-block:64px 52px;position:relative}
-.home-hero h1{font-family:var(--f-disp);font-style:italic;font-weight:800;text-transform:uppercase;font-size:clamp(40px,8.4vw,112px);letter-spacing:-.03em;line-height:.9;margin-top:18px;max-width:12ch}
-.home-hero h1 .sl{color:var(--lime)}
-.home-hero .lead{font-size:clamp(16px,1.7vw,20px);color:var(--muted);max-width:52ch;margin-top:24px}
-.home-hero .lead b{color:var(--ink);font-weight:600}
-.home-hero .asterisk{right:-70px;top:-40px;width:320px;height:320px}
-.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:40px}
-.tool{position:relative;display:flex;flex-direction:column;gap:12px;min-height:250px;padding:22px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;transition:transform .15s ease,border-color .15s ease}
-.tool:hover{transform:translateY(-3px);border-color:var(--lime)}
-.tool .ico{width:46px;height:46px;border-radius:6px;display:grid;place-items:center;color:var(--on)}
-.tool.t1 .ico{background:var(--lime)} .tool.t2 .ico{background:var(--yellow)} .tool.t3 .ico{background:var(--pink)}
-.tool h2{font-family:var(--f-disp);font-style:italic;font-weight:800;text-transform:uppercase;font-size:26px;letter-spacing:-.02em}
-.tool p{color:var(--muted);font-size:14.5px;flex:1}
-.tool .go{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px}
-.tool .go span:last-child{font-family:var(--f-disp);font-size:22px;color:var(--lime)}
-.tool .badge2{position:absolute;top:20px;right:20px;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:4px 8px;border-radius:4px;background:#2C2C2C;color:var(--ink)}
-.me{margin-top:40px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px 24px;align-items:center;padding:20px 22px;border:1px solid var(--lime);border-radius:6px;background:var(--accent-soft)}
-.me .pct{font-family:var(--f-disp);font-style:italic;font-weight:800;font-size:44px;color:var(--lime);line-height:1}
-.me h3{font-family:var(--f-disp);font-weight:700;font-size:17px}
-.me p{color:var(--muted);font-size:14px;margin-top:4px}
-.me .acts{display:flex;gap:8px;flex-wrap:wrap}
-.home-sec{padding-block:56px 20px}
-.home-sec h2.st{font-family:var(--f-disp);font-style:italic;font-weight:800;text-transform:uppercase;font-size:clamp(24px,3.4vw,36px);letter-spacing:-.02em}
-.home-sec h2.st::after{content:"//";color:var(--lime);margin-left:4px}
-.facts3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
-.facts3 div{border-top:2px solid var(--lime);padding-top:14px}
-.facts3 h3{font-family:var(--f-disp);font-weight:700;font-size:16px}
-.facts3 p{color:var(--muted);font-size:14px;margin-top:6px}
-@media (max-width:900px){.tools,.facts3{grid-template-columns:minmax(0,1fr)}.tool{min-height:0}.me{grid-template-columns:minmax(0,1fr)}}
-</style>
+<section id="upload">
+  <div class="band" style="border-bottom:0">
+    <svg class="asterisk" viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor"><rect x="41" y="4" width="18" height="92" rx="9"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(60 50 50)"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(120 50 50)"/></g></svg>
+    <div class="wrap up-hero">
+      <p class="eyebrow"><b>UTFPR</b> . Portal do Aluno . Histórico escolar .</p>
+      <h1><span class="sl">-</span>Seu histórico, sem confusão<span class="sl">//</span></h1>
+      <p class="lead">Envie o PDF do <b>Histórico Escolar</b> do Portal do Aluno e veja quanto do curso você já cumpriu, o que falta para a colação, cada disciplina da matriz e todas as tentativas, semestre a semestre.</p>
 
-<header class="home-hero">
-  <svg class="asterisk" viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor"><rect x="41" y="4" width="18" height="92" rx="9"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(60 50 50)"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(120 50 50)"/></g></svg>
-  <div class="wrap">
-    <p class="eyebrow"><b>UTFPR</b> . Curitiba . Graduação .</p>
-    <h1><span class="sl">-</span>A faculdade sem confusão<span class="sl">//</span></h1>
-    <p class="lead">Entenda o seu <b>histórico</b>, monte a <b>grade do semestre</b> sem choque de horário e encontre <b>projetos de extensão</b> com inscrições abertas. Tudo em um lugar, feito por estudantes.</p>
+      <div class="drop" id="drop">
+        <svg width="40" height="40" viewBox="0 0 24 24" aria-hidden="true" style="color:var(--lime)"><path d="M12 15V4m0 0l-4 4m4-4l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <p class="big">Arraste o PDF do histórico para cá</p>
+        <p class="small">ou escolha o arquivo no seu computador ou celular</p>
+        <div class="drop-actions">
+          <label class="btn primary" for="file">Escolher PDF</label>
+          <button class="btn ghost" type="button" id="btn-ex">Ver um exemplo</button>
+        </div>
+        <input id="file" type="file" accept="application/pdf,.pdf" hidden>
+      </div>
+      <div id="up-status"></div>
+      <p class="privacy"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span>O PDF é lido aqui mesmo, no seu navegador. Nada é enviado nem guardado em servidor. Se você marcar exames ou registros pendentes, essas marcações ficam salvas só neste navegador.</span></p>
 
-    <div id="me" hidden></div>
-
-    <div class="tools">
-      <a class="tool t1" href="/historico/">
-        <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 12h7M9 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-        <h2>Histórico</h2>
-        <p>Envie o PDF do histórico do Portal do Aluno e veja quanto do curso você já cumpriu, o que falta para a colação e todas as tentativas de cada disciplina.</p>
-        <span class="go"><span>Ler meu histórico</span><span>→</span></span>
-      </a>
-      <a class="tool t2" href="/grade/">
-                <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 9h18M9 4v17M15 4v17" stroke="currentColor" stroke-width="2"/></svg></span>
-        <h2>Montar grade</h2>
-        <p>Escolha turmas abertas do semestre e veja a grade semanal na hora, com aviso de conflito e as disciplinas que ainda faltam no seu histórico em destaque.</p>
-        <span class="go"><span>Montar minha grade</span><span>→</span></span>
-      </a>
-      <a class="tool t3" href="/extensao/">
-        <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5v19M2.5 12h19M5.3 5.3l13.4 13.4M18.7 5.3L5.3 18.7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
-        <h2>Extensão</h2>
-        <p>Projetos de extensão ativos no câmpus, com área, carga horária, vagas, prazo de inscrição e contato de quem coordena.</p>
-        <span class="go"><span>Ver projetos</span><span>→</span></span>
-      </a>
+      <h2 class="how-title">Como gerar o PDF</h2>
+      <div class="how"><ol>
+        <li><span class="n">01</span><h3>Abra o histórico</h3><p>Entre no Portal do Aluno da UTFPR e abra a página do Histórico Escolar.</p></li>
+        <li><span class="n">02</span><h3>Clique em Imprimir</h3><p>Use o botão “Imprimir” que aparece no topo da página do histórico.</p></li>
+        <li><span class="n">03</span><h3>Salve como PDF</h3><p>Na janela de impressão, escolha o destino “Salvar como PDF” e envie o arquivo aqui.</p></li>
+      </ol></div>
+      <p class="disclaimer">Ferramenta independente, sem vínculo oficial com a UTFPR. Os números vêm do próprio histórico; confira sempre no Portal do Aluno antes de tomar decisões.</p>
     </div>
   </div>
-</header>
+</section>
 
-<section class="home-sec"><div class="wrap">
-  <h2 class="st">Seus dados ficam com você</h2>
-  <div class="facts3">
-    <div><h3>Nada vai para servidor</h3><p>O PDF do histórico é lido no seu próprio navegador. O site não recebe, não guarda e não envia o arquivo para lugar nenhum.</p></div>
-    <div><h3>Salvo só neste aparelho</h3><p>O resumo do histórico e a grade que você monta ficam guardados no navegador, para as páginas conversarem entre si. Você pode apagar quando quiser.</p></div>
-    <div><h3>Confira no Portal</h3><p>As informações vêm de documentos da UTFPR, mas podem mudar. Antes de qualquer decisão ou matrícula, confira no Portal do Aluno.</p></div>
+<!-- ============ ANÁLISE ============ -->
+<section id="app" hidden>
+  <div class="ex-banner" id="ex-banner" hidden><div class="wrap"><span>Você está vendo um exemplo com dados fictícios.</span><button type="button" id="ex-leave">Enviar meu histórico</button></div></div>
+  <header class="band">
+    <svg class="asterisk" viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor"><rect x="41" y="4" width="18" height="92" rx="9"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(60 50 50)"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(120 50 50)"/></g></svg>
+    <div class="wrap">
+      <div class="band-in">
+        <div class="hero-txt">
+          <p class="eyebrow" id="h-eyebrow"></p>
+          <h1><span class="sl">-</span>Histórico escolar<span class="sl">//</span></h1>
+          <p class="who"><span class="ast">*</span><span id="h-name"></span></p>
+          <p class="sub" id="h-sub"></p>
+        </div>
+        <div class="badge" aria-hidden="true">
+          <svg class="ring" viewBox="0 0 150 150"><defs><path id="circ" d="M75,75 m-58,0 a58,58 0 1,1 116,0 a58,58 0 1,1 -116,0"/></defs><text><textPath href="#circ" textLength="358" lengthAdjust="spacing" id="h-ring"></textPath></text></svg>
+          <div class="core"><div><b id="h-pct"></b><br><span>do curso</span></div></div>
+        </div>
+      </div>
+      <dl class="stats facts" id="h-stats"></dl>
+    </div>
+  </header>
+  <div class="ribbons" aria-hidden="true">
+    <div class="rib b"><div class="track" id="rib-b"></div></div>
+    <div class="rib a"><div class="track" id="rib-a"></div></div>
   </div>
-</div></section>
 
+  <nav class="tabs" aria-label="Seções do histórico">
+    <div class="wrap tabs-in">
+      <a href="#resumo">Resumo</a>
+      <a href="#matriz">Mapa da matriz</a>
+      <a href="#historico">Histórico completo <span class="count" id="cnt-hist"></span></a>
+      <a href="#semestres">Semestre a semestre</a>
+      <span class="grow"></span>
+      <button class="btn ghost sm" type="button" id="btn-new">Trocar PDF</button>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section data-view="resumo" aria-labelledby="t-resumo">
+      <div class="view-head"><div>
+        <h2 id="t-resumo">Onde você está no curso</h2>
+        <p>Quanto já foi integralizado, o que falta para a colação e os pontos que pedem atenção. Marque exames solicitados e atividades já feitas que ainda não foram registradas para ver como fica.</p>
+      </div></div>
+      <div class="resumo">
+        <div class="stack">
+          <section class="card" aria-labelledby="h-prog">
+            <h3 id="h-prog">Carga horária integralizada</h3>
+            <div class="headline"><span class="big" id="p-big"></span><span class="of" id="p-of"></span><span class="pct" id="p-pct"></span></div>
+            <div class="bar lg" id="p-bar"></div>
+            <div class="comps" id="comps"></div>
+            <div class="legend">
+              <span><i class="sw d"></i>Concluído</span>
+              <span><i class="sw c"></i>Em curso ou em exame</span>
+              <span><i class="sw w"></i>Feito, aguardando registro</span>
+              <span><i class="sw r"></i>Falta</span>
+            </div>
+            <div class="scenario" id="scenario"></div>
+          </section>
+          <section class="card todo" aria-labelledby="h-todo">
+            <h3 id="h-todo">O que falta para formar</h3>
+            <p class="lede">Use os botões de cada item para marcar exame de suficiência solicitado ou atividade feita aguardando registro.</p>
+            <div id="todo"></div>
+          </section>
+        </div>
+        <div class="stack" id="side"></div>
+      </div>
+    </section>
+
+    <section data-view="matriz" aria-labelledby="t-matriz" hidden>
+      <div class="view-head">
+        <div><h2 id="t-matriz">Mapa da matriz</h2><p id="m-lede">Disciplinas obrigatórias organizadas pelo período da matriz. Toque em uma para ver tentativas, notas e professores.</p></div>
+        <div class="mlegend" aria-label="Legenda">
+          <span><svg class="ic" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="3" fill="var(--ok-bg)" stroke="var(--lime)" stroke-opacity=".4"/><path d="M4.5 8.5l2.4 2.4 4.6-5.4" fill="none" stroke="var(--lime)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Concluída</span>
+          <span><svg class="ic" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="3" fill="var(--warn-bg)" stroke="var(--yellow)"/></svg>Cursando</span>
+          <span><svg class="ic" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="3" fill="none" stroke="var(--pink)" stroke-dasharray="2.5 2"/></svg>Exame solicitado</span>
+          <span><svg class="ic" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="3" fill="var(--info-bg)" stroke="var(--blue-2)" stroke-dasharray="2.5 2"/></svg>Aguardando registro</span>
+          <span><svg class="ic" viewBox="0 0 16 16"><rect x="1.5" y="1.5" width="13" height="13" rx="3" fill="none" stroke="#5A5A5A" stroke-dasharray="2.5 2"/></svg>Não cursada</span>
+          <span><span class="dots"><i></i></span>Reprovação</span>
+        </div>
+      </div>
+      <div class="matrix" id="matrix"></div>
+      <div id="opt-area"></div>
+    </section>
+
+    <section data-view="historico" aria-labelledby="t-hist" hidden>
+      <div class="view-head"><div><h2 id="t-hist">Histórico completo</h2><p>Cada linha é uma tentativa: disciplinas da matriz, equivalentes, optativas, exames de suficiência, enriquecimento curricular e matrículas atuais.</p></div></div>
+      <div class="filters">
+        <label class="search">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <input id="q" type="search" placeholder="Buscar disciplina, código ou professor(a)" autocomplete="off" aria-label="Buscar disciplina, código ou professor(a)">
+        </label>
+        <select id="fk" aria-label="Origem"></select>
+        <div class="chips" role="group" aria-label="Filtrar por situação" id="fchips"></div>
+      </div>
+      <div class="resultline"><span id="rcount"></span><button id="clear" type="button" hidden>Limpar filtros</button></div>
+      <div class="hist-wrap">
+        <table class="hist">
+          <thead><tr><th>Semestre</th><th>Disciplina</th><th class="r">CH</th><th class="r">Média</th><th class="r">Freq.</th><th>Situação</th><th>Professor(a)</th></tr></thead>
+          <tbody id="hbody"></tbody>
+        </table>
+        <div class="empty" id="hempty" hidden>Nenhuma tentativa com esses filtros. Tente outra busca ou limpe os filtros.</div>
+      </div>
+    </section>
+
+    <section data-view="semestres" aria-labelledby="t-sem" hidden>
+      <div class="view-head">
+        <div><h2 id="t-sem">Semestre a semestre</h2><p>Cada barra mostra as disciplinas do semestre, com largura proporcional à carga horária. Bloqueios e mudanças de matriz aparecem no semestre em que aconteceram.</p></div>
+        <div class="slegend">
+          <span><i class="sw" style="background:var(--lime)"></i>Aprovada</span>
+          <span><i class="sw" style="background:var(--blue)"></i>Aproveitada</span>
+          <span><i class="sw" style="background:var(--pink)"></i>Reprovada</span>
+          <span><i class="sw" style="background:#2A2A2A;border:1px solid #444"></i>Cancelada</span>
+          <span><i class="sw c"></i>Cursando</span>
+        </div>
+      </div>
+      <div class="tl" id="tl"></div>
+    </section>
+  </main>
+  <footer><div class="wrap"><span id="f-src"></span><span>Ferramenta independente, sem vínculo oficial com a UTFPR.</span></div></footer>
+</section>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="d-title" hidden>
+  <div class="dh">
+    <div class="t"><div class="code" id="d-code"></div><h2 id="d-title"></h2><div class="kind" id="d-kind"></div></div>
+    <button class="xbtn" id="d-close" type="button" aria-label="Fechar detalhes"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+  </div>
+  <div class="db" id="d-body"></div>
+</aside>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js"></script>
+<script>
+/* Leitor do Histórico Escolar UTFPR (Portal do Aluno). Entrada: itens de texto do pdf.js {p,x,y,s}. */
+(function(root){
+const T=s=>String(s||'').replace(/\s+/g,' ').trim();
+const num=s=>{s=T(s);if(!s||s==='*'||s==='-')return null;const v=parseFloat(s.replace(/\./g,'').replace(',','.'));return isNaN(v)?null:v;};
+const numDot=s=>{s=T(s);if(!s||s==='*')return null;if(/^\d+\.\d$/.test(s))return parseFloat(s);return num(s);};
+const GAP=8.4;
+
+function blocks(items){ // items já de um mesmo grupo; ordena e agrupa linhas próximas
+  const s=items.slice().sort((a,b)=>a.p-b.p||b.y-a.y||a.x-b.x);
+  const out=[];let cur=null;
+  for(const it of s){
+    if(cur&&cur.p===it.p&&(cur.last-it.y)<=GAP){cur.items.push(it);cur.last=it.y;}
+    else{cur={p:it.p,first:it.y,last:it.y,items:[it]};out.push(cur);}
+  }
+  out.forEach(b=>{b.c=(b.first+b.last)/2;
+    const lines=[];b.items.forEach(i=>{const l=lines.find(l=>Math.abs(l.y-i.y)<1.5);if(l)l.items.push(i);else lines.push({y:i.y,items:[i]});});
+    b.text=T(lines.sort((a,b)=>b.y-a.y).map(l=>l.items.sort((a,b)=>a.x-b.x).map(i=>i.s).join(' ')).join(' '));});
+  return out;
+}
+
+function parseTable(items,cols,anchor,opt){
+  opt=opt||{};
+  // localizar cabeçalhos
+  const pos={};
+  for(const c of cols){
+    const m=items.filter(i=>c.re.test(T(i.s))).sort((a,b)=>a.p-b.p||b.y-a.y||a.x-b.x);
+    if(!m.length)continue;
+    const firstP=m[0].p, firstY=m[0].y;
+    const row=m.filter(i=>i.p===firstP&&Math.abs(i.y-firstY)<9).sort((a,b)=>a.x-b.x);
+    const pick=row[c.n||0]||m[0];
+    pos[c.f]={x:pick.x,y:pick.y,p:pick.p};
+  }
+  if(!pos[anchor])return [];
+  // faixas de cabeçalho por página (cabeçalho pode repetir em cada página)
+  const aRe=cols.find(c=>c.f===anchor).re;
+  const heads=items.filter(i=>aRe.test(T(i.s))&&Math.abs(i.x-pos[anchor].x)<4);
+  const headY={};heads.forEach(h=>{if(headY[h.p]==null||h.y<headY[h.p])headY[h.p]=h.y;});
+  let body=items.filter(i=>{
+    if(headY[i.p]!=null&&i.y>=headY[i.p]-8)return false;
+    if(headY[i.p]==null&&i.p<pos[anchor].p)return false;
+    return true;
+  });
+  // cortar notas de rodapé "(0) ..." / "(1) ..."
+  const foot=body.filter(i=>/^\(\d\)\s+\S/.test(T(i.s))&&T(i.s).length>8);
+  body=body.filter(i=>!foot.some(f=>f.p===i.p&&i.y<=f.y+0.5));
+  if(opt.drop)body=body.filter(i=>!opt.drop(i,body));
+  let xs=Object.entries(pos).map(([f,v])=>({f,x:v.x})).sort((a,b)=>a.x-b.x);
+  if(opt.dataCols&&body.length){
+    const sx=body.map(i=>i.x).sort((a,b)=>a-b);const cl=[];
+    sx.forEach(x=>{const c=cl[cl.length-1];if(c&&x-c.max<=6){c.max=x;c.n++;}else cl.push({min:x,max:x,n:1});});
+    if(cl.length===xs.length)xs=xs.map((k,i)=>({f:k.f,x:cl[i].min}));
+  }
+  const colOf=it=>{let c=null;for(const k of xs){if(k.x<=it.x+1.6)c=k.f;}return c||xs[0].f;};
+  const byCol={};body.forEach(it=>{const c=colOf(it);(byCol[c]=byCol[c]||[]).push(it);});
+  const anchors=blocks(byCol[anchor]||[]);
+  const rows=anchors.map(a=>({_p:a.p,_y:a.c,[anchor]:a.text}));
+  for(const f of Object.keys(byCol)){
+    if(f===anchor)continue;
+    for(const b of blocks(byCol[f])){
+      let best=null,bd=1e9;
+      anchors.forEach((a,i)=>{if(a.p!==b.p)return;const d=Math.abs(a.c-b.c);if(d<bd){bd=d;best=i;}});
+      if(best==null)continue;
+      rows[best][f]=T((rows[best][f]?rows[best][f]+' ':'')+b.text);
+    }
+  }
+  return rows;
+}
+
+function lines(items){
+  const L=[];items.slice().sort((a,b)=>a.p-b.p||b.y-a.y||a.x-b.x).forEach(i=>{
+    const l=L.find(l=>l.p===i.p&&Math.abs(l.y-i.y)<1.5);if(l)l.items.push(i);else L.push({p:i.p,y:i.y,items:[i]});});
+  L.forEach(l=>l.items.sort((a,b)=>a.x-b.x));return L;
+}
+
+function status(raw){
+  const s=T(raw);
+  let st='outro',mot='',label='';
+  if(/^Crédito Consignado/i.test(s))st='aproveitada';
+  else if(/^Aprovad[oa] em Exame de Sufici/i.test(s))st='suficiencia';
+  else if(/^Aprovad/i.test(s)){st='aprovada';}
+  else if(/^Reprovad[oa] em Exame de Sufici/i.test(s)){st='reprovada';mot='ex';}
+  else if(/^Reprovad/i.test(s)){st='reprovada';mot=/Nota\s*\/\s*Frequ/i.test(s)?'nf':/Frequ/i.test(s)?'f':'n';}
+  else if(/^Cancelad/i.test(s))st='cancelada';
+  else if(/^Trancad/i.test(s))st='cancelada';
+  else if(/^Cursando/i.test(s))st='cursando';
+  else if(/^Dispens|^Aproveitament|^Equival/i.test(s))st='aproveitada';
+  else if(/^Matriculad/i.test(s))st='cursando';
+  if(st==='outro')label=s.split(/\s{2,}| - /)[0];
+  // professor e origem
+  let rest=s.replace(/^(Crédito Consignado|Aprovad[oa] em Exame de Suficiência|Reprovad[oa] em Exame de Suficiência|Aprovad[oa] Por Nota\s*\/\s*Frequência|Aprovad[oa] Por Nota|Aprovad[oa] Por Frequência|Aprovad[oa]|Reprovad[oa] Por Nota\s*\/\s*Frequência|Reprovad[oa] Por Frequência|Reprovad[oa] Por Nota|Reprovad[oa]|Cancelad[oa]|Cursando)/i,'');
+  let from='';const m=rest.match(/\[\s*disciplina\s+([A-Z0-9]+)/i);if(m)from=m[1].toUpperCase();
+  const mm=/Mudança de Matriz/i.test(rest);
+  rest=rest.replace(/\[.*?\]/g,'').replace(/>>.*$/,'').replace(/\s-\s*(Doutorado|Mestrado|Especialização|Especialista|Graduação|Pós-Doutorado|Livre-Docência)\s*/gi,' ');
+  const prof=T(rest.replace(/^[-\s]+|[-\s]+$/g,''));
+  return {st,mot,label,from,prof:prof.length>2?prof:'',mm};
+}
+
+const TITLE=s=>s.replace(/\S+/g,w=>{const l=w.toLowerCase();if(/^(de|da|do|das|dos|e|em|no|na|ao|a|o|à|para|por|com)$/.test(l))return l;if(/^(tcc|ii|iii|iv|vi|vii|viii|ix|i)$/i.test(w)&&w.length<=4&&/^[ivx]+$|^tcc$/i.test(w))return w.toUpperCase();return l.charAt(0).toUpperCase()+l.slice(1);}).replace(/^./,c=>c.toUpperCase());
+
+function parse(raw){
+  const items=raw.filter(i=>T(i.s)&&i.y>22&&i.y<812).map(i=>({p:i.p,x:i.x,y:i.y,s:i.s}));
+  const full=items.map(i=>i.s).join(' ');
+  if(!/Hist[oó]rico Escolar/i.test(raw.map(i=>i.s).join(' '))||!/Disciplinas Obrigat[oó]rias/i.test(full))throw new Error('formato');
+  // ---- cabeçalho
+  const L=lines(items);
+  const after=(re)=>{for(const l of L){const k=l.items.findIndex(i=>re.test(T(i.s)));if(k>=0){
+      const lab=l.items[k];const cand=items.filter(i=>i.p===lab.p&&i.x>lab.x+2&&Math.abs(i.y-lab.y)<3).sort((a,b)=>a.x-b.x);return cand.length?T(cand[0].s):'';}}return '';};
+  const alunoRaw=after(/^Aluno:$/);
+  const am=alunoRaw.match(/^(\d+)\s*-\s*(.+)$/);
+  const info={
+    matricula:am?am[1]:'', nome:am?TITLE(am[2]):TITLE(alunoRaw),
+    curso:after(/^Curso:$/), turno:after(/^Turno:$/), matriz:after(/^Matriz:$/),
+    periodo:after(/^Período:$/), situacao:after(/^Situação:$/), ingresso:after(/^Ingresso:$/),
+    coefAbs:after(/^Coeficiente absoluto:$/), coefNorm:after(/^Coeficiente normalizado:$/), colacao:after(/^Data da colação:$/),
+    campus:(items.find(i=>/^Câmpus /.test(T(i.s)))||{s:''}).s.replace(/^Câmpus\s*/,'').trim(),
+  };
+  const em=raw.map(i=>i.s).join(' ').match(/(\d{2}\/\d{2}\/\d{4})\s+(\d{2}:\d{2}):\d{2}/)||raw.map(i=>i.s).join(' ').match(/(\d{2}\/\d{2}\/\d{4}),?\s+(\d{2}:\d{2})/);
+  info.emitido=em?em[1]+', '+em[2]:'';
+  const cm=info.curso.match(/^(\d+)\s*-\s*(.+)$/);info.cursoCod=cm?cm[1]:'';info.cursoNome=cm?TITLE(cm[2]):TITLE(info.curso);
+  const mz=info.matriz.match(/^(\d+)/);info.matrizCod=mz?mz[1]:info.matriz;
+  const ig=info.ingresso.match(/(\d)\s*\/\s*(\d{4})/);info.ingressoLabel=ig?ig[2]+'/'+ig[1]:info.ingresso;
+
+  // ---- seções
+  const SEC=[
+    ['obr',/^Disciplinas Obrigatórias Cursadas$/],['eqv',/^Detalhes das Equivalentes Cursadas/],
+    ['opt',/^Disciplinas Optativas Cursadas$/],['optres',/^Resumo Optativas/],['optdet',/^Detalhes das Optativas Cursadas e Aprovadas/],
+    ['enr',/^Disciplinas De Enriquecimento Curricular - No Câmpus/i],['ext',/^Disciplinas De Enriquecimento Curricular - Externas/i],
+    ['exa',/^Exame de Suficiência$/i],['falt',/^Disciplinas Obrigatórias Faltantes$/],['dep',/^Dependências$/],
+    ['mat',/^Disciplinas Matriculadas/],['enade',/^Exame De Curso$/i],['chs',/^Quadro De Carga Horária Semanal/i],
+    ['hfalt',/^Histórico de Disciplinas Faltantes$/i],['vinc',/^Vínculos de Matrícula$/i],['bloq',/^Histórico de Bloqueios$/i],
+    ['extn',/^Atividade Extensionista$/i],['resumo',/^Resumo Geral$/i],['rdisc',/^Quadro Resumo disciplinas$/i],['rext',/^Quadro Resumo Atividades Extensionistas$/i],['chext',/^Detalhes das CHExt/i]
+  ];
+  const marks=[];
+  for(const [k,re] of SEC){const it=items.find(i=>re.test(T(i.s)));if(it)marks.push({k,p:it.p,y:it.y,s:T(it.s)});}
+  marks.sort((a,b)=>a.p-b.p||b.y-a.y);
+  const sec={};
+  marks.forEach((m,i)=>{const n=marks[i+1];
+    sec[m.k]=items.filter(it=>{const afterM=(it.p>m.p)||(it.p===m.p&&it.y<m.y-0.5);const beforeN=!n||(it.p<n.p)||(it.p===n.p&&it.y>n.y+0.5);return afterM&&beforeN;});
+    sec[m.k+'_title']=m.s;});
+  const S=k=>sec[k]||[];
+  const H=(f,re,n)=>({f,re,n});
+
+  // ---- obrigatórias
+  const discCols=[H('per',/^Per\.Disc\/Matriz$/),H('cod',/^Cód\.$/),H('nome',/^Disciplina$/),H('turma',/^Turma$/),H('tipo',/^Tipo$/),H('chs',/^CHS$/),H('cht',/^CHT$/),H('chext',/^CHEXT$/),H('cred',/^Créd\.$/),H('media',/^Média$/),H('freq',/^Freq\.$/),H('sem',/^Semestre/),H('ano',/^Ano$/),H('sit',/^Situação/)];
+  const recs=[];const matriz={};const enadeIng=[];
+  const mkRec=(r,k,extra)=>{const s=status(r.sit);return Object.assign({c:T(r.cod).replace(/\s+/g,''),n:TITLE(T(r.nome)),k,ch:num(r.cht),chs:num(r.chs),chext:num(r.chext),m:numDot(r.media),f:num(r.freq),a:+T(r.ano)||null,s:+T(r.sem)||null,st:s.st,mot:s.mot,lbl:s.label,t:T(r.turma),p:s.prof,from:s.from||undefined,mm:s.mm||undefined},extra||{});};
+  for(const r of parseTable(S('obr'),discCols,'cod')){
+    const cod=T(r.cod).replace(/\s+/g,'');
+    if(/^ENADE/i.test(cod)){enadeIng.push({ano:T(r.ano),sit:T(r.sit)});continue;}
+    if(!/^[A-Z0-9]{3,}$/.test(cod))continue;
+    const rec=mkRec(r,'obr');rec.per=+T(r.per)||null;recs.push(rec);
+    if(!matriz[cod])matriz[cod]={c:cod,n:rec.n,p:rec.per,ch:rec.ch,chs:rec.chs};
+  }
+  // ---- equivalentes
+  const eqCols=[H('cod',/^Cód\.$/,0),H('nome',/^Nome$/,0),H('turma',/^Turma$/),H('tipo',/^Tipo$/),H('chs',/^CHS$/,0),H('cht',/^CHT$/,0),H('media',/^Média$/),H('freq',/^Freq\.$/),H('anoper',/^Ano\/Período$/),H('sit',/^Situação$/),H('per',/^Per\.$/),H('cod2',/^Cód\.$/,1),H('nome2',/^Nome$/,1),H('chs2',/^CHS$/,1),H('cht2',/^CHT$/,1),H('cons',/^Cons\.$/)];
+  for(const r of parseTable(S('eqv'),eqCols,'cod',{drop:i=>T(i.s)==='=>'})){
+    const ap=T(r.anoper).match(/(\d{4})\s*\/\s*(\d)/);
+    const rec=mkRec({...r,ano:ap?ap[1]:'',sem:ap?ap[2]:''},'eqv');rec.map=T(r.cod2).replace(/\s+/g,'');recs.push(rec);
+    if(rec.map&&!matriz[rec.map])matriz[rec.map]={c:rec.map,n:TITLE(T(r.nome2)),p:+T(r.per)||null,ch:num(r.cht2),chs:num(r.chs2)};
+    else if(rec.map&&matriz[rec.map]&&matriz[rec.map].ch==null)matriz[rec.map].ch=num(r.cht2);
+  }
+  // ---- optativas
+  const optCols=discCols.map(c=>c.f==='sem'?H('sem',/^Semestre/):c);
+  const optRows=parseTable(S('opt'),optCols,'cod');
+  const conj=parseTable(S('optres'),[H('id',/^Optativa$/),H('nome',/^Nome do Conjunto$/),H('pi',/^Período inicial$/),H('pf',/^Período final$/),H('chs',/^CHS$/),H('cho',/^CH Obrigatória$/),H('cha',/^CH Cursada e Aprovada$/),H('chf',/^CH Faltante$/),H('chv',/^CH Validada$/)],'id')
+    .filter(r=>/^\d+$/.test(T(r.id))).map(r=>({id:T(r.id),nome:TITLE(T(r.nome)),pi:+T(r.pi),pf:+T(r.pf),chs:num(r.chs),cho:num(r.cho)||0,cha:num(r.cha)||0,chf:num(r.chf)||0,chv:num(r.chv)||0}));
+  const det=parseTable(S('optdet'),[H('id',/^Optativa$/),H('nome',/^Nome do Conjunto$/),H('per',/^Período$/),H('cod',/^Cód\.$/),H('disc',/^Disciplina$/),H('chs',/^CHS/),H('cht',/^CHT/),H('chext',/^CHEXT/)],'cod');
+  const grpOf={};det.forEach(r=>{grpOf[T(r.cod).replace(/\s+/g,'')]=T(r.id);});
+  const prefix=n=>{const m=String(n).match(/^([^:]{1,12}):/);return m?m[1].toLowerCase():null;};
+  const guessGroup=(cod,nome,per)=>{
+    if(grpOf[cod])return {g:grpOf[cod],guess:false};
+    const pf=prefix(nome);
+    if(pf){const hit=recs.concat(optRows.map(r=>({c:T(r.cod),n:TITLE(T(r.nome))}))).find(r=>grpOf[r.c]&&prefix(r.n)===pf);if(hit)return {g:grpOf[hit.c],guess:true};}
+    const byPer=conj.filter(c=>c.pi===per);if(per&&byPer.length===1)return {g:byPer[0].id,guess:true};
+    return {g:null,guess:true};
+  };
+  for(const r of optRows){const cod=T(r.cod).replace(/\s+/g,'');if(!/^[A-Z0-9]{3,}$/.test(cod))continue;
+    const rec=mkRec(r,'opt');rec.per=+T(r.per)||null;const g=guessGroup(cod,rec.n,rec.per);rec.g=g.g;rec.gGuess=g.guess;recs.push(rec);}
+  // ---- enriquecimento
+  const enrCols=[H('cod',/^Cód\.$/),H('campus',/^Câmpus$/),H('nome',/^Disciplina$/),H('turma',/^Turma$/),H('tipo',/^Tipo$/),H('chs',/^CHS$/),H('cht',/^CHT$/),H('cred',/^Créd\.$/),H('media',/^Média$/),H('freq',/^Freq\./),H('sem',/^Per\.$/),H('ano',/^Ano$/),H('sit',/^Situação$/)];
+  for(const r of parseTable(S('enr'),enrCols,'cod')){const cod=T(r.cod).replace(/\s+/g,'');if(!/^[A-Z0-9]{3,}$/.test(cod))continue;recs.push(mkRec(r,'ant'));}
+  // ---- externas
+  const extCols=[H('per',/^Período\(0\)$/),H('inst',/^Instituição$/),H('pais',/^País$/),H('nome',/^Disciplina$/),H('turma',/^Turma$/),H('obs',/^Observação$/),H('cht',/^CHT$/),H('media',/^Nota$/),H('freq',/^Freq\.$/),H('sem',/^Per\.$/),H('ano',/^Ano$/),H('sit',/^Situação$/)];
+  for(const r of parseTable(S('ext'),extCols,'nome')){if(/Nenhuma/i.test(T(r.nome)))continue;const rec=mkRec({...r,cod:'EXT-'+recs.length},'xt');rec.c='EXT';rec.inst=T(r.inst);recs.push(rec);}
+  // ---- exames de suficiência
+  const exCols=[H('cod',/^Código$/),H('nome',/^Disciplina$/),H('cht',/^CHT$/),H('media',/^Média$/),H('freq',/^Freq\.$/),H('sem',/^Per\.$/),H('ano',/^Ano$/),H('sit',/^Situação$/)];
+  for(const r of parseTable(S('exa'),exCols,'cod')){
+    const cod=T(r.cod).replace(/\s+/g,'');if(!/^[A-Z0-9]{3,}$/.test(cod))continue;
+    const rec=mkRec(r,'exa');
+    const dup=recs.some(x=>x.c===cod&&x.a===rec.a&&x.s===rec.s&&x.st===rec.st&&x.k!=='exa');
+    if(rec.st==='aprovada')rec.st='suficiencia';
+    if(recs.some(x=>x.c===cod&&x.a===rec.a&&x.s===rec.s&&(x.st==='suficiencia')&&x.k!=='exa'))continue;
+    if(dup)continue;
+    if(!matriz[cod]){const g=guessGroup(cod,rec.n,null);rec.g=g.g;rec.gGuess=g.guess;}
+    recs.push(rec);
+  }
+  // ---- faltantes
+  for(const r of parseTable(S('falt'),[H('per',/^Semestre na Matriz$/),H('cod',/^Código$/),H('nome',/^Disciplina$/)],'cod')){
+    const cod=T(r.cod).replace(/\s+/g,'');if(!/^[A-Z0-9]{3,}$/.test(cod))continue;
+    if(!matriz[cod])matriz[cod]={c:cod,n:TITLE(T(r.nome)),p:+T(r.per)||null,ch:null,chs:null};
+    matriz[cod].faltante=true;
+  }
+  // ---- histórico de faltantes (CHS e regra)
+  let chsFaltTotal=null,limite=16;
+  const hf=S('hfalt');
+  const lm=hf.map(i=>i.s).join(' ').match(/atingir\s+(\d+)\s+aulas/i);if(lm)limite=+lm[1];
+  const hlines=lines(hf);
+  const dropY=[];hlines.forEach(l=>{const t=T(l.items[0].s);if(/^Carga horária semanal faltante/i.test(t)){if(/total/i.test(t))chsFaltTotal=num(l.items[l.items.length-1].s);dropY.push(l);}});
+  const hfRows=parseTable(hf,[H('per',/^Período$/),H('cod',/^Cód\.$/),H('nome',/^Disciplina$/),H('chs',/^CHS/),H('obs',/^Observação$/)],'cod',{drop:i=>dropY.some(l=>l.p===i.p&&Math.abs(l.y-i.y)<1.5)||/^O aluno que atingir|^optativas não avança/i.test(T(i.s))});
+  const faltChs={};
+  hfRows.forEach(r=>{const cod=T(r.cod).replace(/\s+/g,'');const v=num(r.chs);if(cod&&v!=null){faltChs[cod]=v;if(matriz[cod]){if(matriz[cod].chs==null)matriz[cod].chs=v;if(matriz[cod].ch==null)matriz[cod].ch=v*15;}}});
+  // ---- matriculadas
+  const mt=(sec.mat_title||'').match(/(\d{4})\s*\/\s*(\d)/);const matTerm=mt?{a:+mt[1],s:+mt[2]}:null;
+  for(const r of parseTable(S('mat'),[H('cod',/^Código$/),H('nome',/^Disciplina$/),H('turma',/^Turma$/),H('sit',/^Situação$/)],'cod')){
+    const cod=T(r.cod).replace(/\s+/g,'');if(!/^[A-Z0-9]{3,}$/.test(cod))continue;
+    const eq=recs.find(x=>x.c===cod&&x.map);
+    let k='mat',extra={};
+    if(matriz[cod])k='obr';else if(eq){k='eqv';extra.map=eq.map;}
+    else{const g=guessGroup(cod,TITLE(T(r.nome)),null);if(g.g||recs.some(x=>x.c===cod&&(x.k==='opt'||(x.k==='exa'&&!matriz[cod])))){k='opt';extra.g=g.g;extra.gGuess=g.guess;}}
+    const known=recs.find(x=>x.c===cod&&x.ch!=null);
+    const ch=k==='obr'?matriz[cod].ch:(k==='eqv'?(known?known.ch:null):(known?known.ch:null));
+    recs.push(Object.assign({c:cod,n:TITLE(T(r.nome)),k,ch,m:null,f:null,a:matTerm?matTerm.a:null,s:matTerm?matTerm.s:null,st:'cursando',mot:'',t:T(r.turma),p:'',chUnknown:ch==null},extra));
+  }
+  // ---- ENADE
+  const en=lines(S('enade')).filter(l=>/^(INGRESSANTE|CONCLUINTE)/i.test(T(l.items[0].s))).map(l=>l.items.map(i=>i.s).join(' ')).join(' ');
+  const ing=en.match(/INGRESSANTE\s+(.*?)(?=CONCLUINTE|$)/i), con=en.match(/CONCLUINTE\s+(.*)$/i);
+  const enade={ingressante:ing?T(ing[1].replace(/Sit\.:\s*/,'')):'',concluinte:con?T(con[1].replace(/Sit\.:\s*/,'')):''};
+  // ---- quadro CHS
+  const chs=lines(S('chs')).filter(l=>/^\d+$/.test(T(l.items[0].s))&&l.items.length>=8).map(l=>l.items.map(i=>T(i.s)==='-'?null:(/^\d+$/.test(T(i.s))&&i===l.items[0]?+T(i.s):num(i.s))));
+  // ---- bloqueios
+  const bloq=parseTable(S('bloq'),[H('ano',/^Ano$/),H('per',/^Período$/),H('data',/^Data$/),H('tipo',/^Tipo$/),H('desc',/^Descrição$/),H('sit',/^Situação$/)],'ano',{dataCols:true})
+    .filter(r=>/\d{2}\/\d{2}\/\d{4}/.test(T(r.data))).map(r=>({a:+T(r.ano),s:+T(r.per),data:T(r.data),tipo:T(r.tipo),desc:T(r.desc),sit:T(r.sit)}));
+  // ---- resumo geral
+  const rl=lines(S('rdisc').concat(S('resumo')));
+  const rrow=re=>{const l=rl.find(l=>re.test(T(l.items[0].s)));return l?l.items.slice(1).map(i=>num(T(i.s).replace(/\(.*$/,''))):null;};
+  const resumo={obr:rrow(/^CHT Disciplinas Obrigatórias/i),opt:rrow(/^CHT Disciplinas Optativas/i),geral:rrow(/^CHT Geral/i)};
+  const xl=lines(S('rext'));
+  const xrow=re=>{const l=xl.find(l=>re.test(T(l.items.map(i=>i.s).join(' '))));if(!l)return null;const vals=l.items.filter(i=>i.x>200);return {f:num(vals[0]&&vals[0].s),g:num(vals[1]&&vals[1].s),h:num(vals[2]&&vals[2].s),sit:T(vals.slice(3).map(i=>i.s).join(' '))};};
+  const extensao=xrow(/^CHEXT geral do curso/i);
+  return {info,recs,matriz,conj,enade,enadeIng,chs,chsFaltTotal,limite,faltChs,bloq,resumo,extensao,matTerm};
+}
+const api={parse,status};
+if(typeof module!=='undefined')module.exports=api;else root.HistParser=api;
+})(this);
+
+</script>
+<script>
+window.EXAMPLE=function(){
+  const P=[
+    [1,[['Fundamentos do Design',60],['Desenho de Observação',60],['História da Arte',60],['Teoria da Cor',45],['Escrita Acadêmica',30]]],
+    [2,[['Tipografia',60],['Ergonomia',60],['Metodologia de Projeto',60],['Composição Visual',60],['Fotografia',45],['Atividades Complementares',null]]],
+    [3,[['Design de Superfície',60],['Ilustração',60],['Materiais e Processos',60],['Design Editorial',60],['Semiótica',45]]],
+    [4,[['Identidade Visual',60],['Design de Interfaces',60],['Gestão do Design',30],['Empreendedorismo',30],['História do Design',60]]],
+    [5,[['Design de Serviços',60],['Design de Embalagem',60],['Design e Sociedade',45],['Estágio Supervisionado',null],['Portfólio',30]]],
+    [6,[['Metodologia do TCC',30],['Motion Design',60]]],
+    [7,[['TCC 1',60],['Design Estratégico',45]]],
+    [8,[['TCC 2',60]]]
+  ];
+  const term=i=>({a:2023+Math.floor(i/2),s:i%2+1});
+  const matriz={},recs=[];
+  const rec=(c,n,k,ch,m,f,ti,st,mot,x)=>{const t=term(ti);recs.push(Object.assign({c,n,k,ch,chs:ch?ch/15:null,m,f,a:t.a,s:t.s,st,mot:mot||'',t:'E'+(10+ti),p:''},x||{}));};
+  const special={
+    'Teoria da Cor':[[0,'reprovada',3.2,80,'n'],[2,'aprovada',7.4,88]],
+    'Ergonomia':[[1,'reprovada',4.1,62,'nf'],[3,'aprovada',8.0,90]],
+    'Ilustração':[[2,'reprovada',2.5,55,'nf'],[7,'cursando']],
+    'Design de Embalagem':[[4,'reprovada',3.8,70,'n']],
+    'Motion Design':[[7,'cursando']],
+    'Design Estratégico':[[7,'cursando']],
+    'Atividades Complementares':[],'Estágio Supervisionado':[],'TCC 2':[]
+  };
+  const grades=[8.4,7.1,9.0,6.8,7.7,9.4,8.1,7.3,10,6.5,8.8,7.9];let gi=0;
+  P.forEach(([p,list])=>list.forEach(([n,ch],j)=>{
+    const c='EX'+p+String.fromCharCode(65+j);matriz[c]={c,n,p,ch,chs:ch?ch/15:null};
+    const sp=special[n];
+    if(sp){sp.forEach(([ti,st,m,f,mot])=>rec(c,n,'obr',ch,st==='cursando'?null:m,st==='cursando'?null:f,ti,st,mot));}
+    else{const ti=Math.min(5,p-1);const g=grades[gi++%grades.length];rec(c,n,'obr',ch,g,85+(gi%3)*5,ti,'aprovada');}
+  }));
+  // optativas
+  rec('EXOP1','Cerâmica','opt',60,8.6,90,2,'aprovada','',{g:'901'});
+  rec('EXOP2','Libras 1','opt',60,9.2,95,3,'aprovada','',{g:'901'});
+  rec('EXOP3','Projeto de Branding','opt',60,8.0,88,4,'aprovada','',{g:'902'});
+  rec('EXOP4','Projeto de Jogos','opt',60,null,null,7,'cursando','',{g:'902'});
+  rec('EXOP5','Projeto Editorial Avançado','opt',60,4.0,60,5,'reprovada','nf',{g:'902',gGuess:true});
+  Object.values(matriz).forEach(m=>{if(!recs.some(r=>r.c===m.c&&r.st!=='reprovada'&&r.st!=='cursando'))m.faltante=true;});
+  const known=Object.values(matriz).reduce((t,m)=>t+(m.ch||0),0);
+  const obrTot=known+400;
+  const obrDone=recs.filter(r=>r.k==='obr'&&r.st==='aprovada').reduce((t,r)=>t+r.ch,0);
+  const conj=[{id:'901',nome:'Optativas Livres',pi:2,pf:8,chs:8,cho:120,cha:120,chf:0,chv:120},{id:'902',nome:'Optativas de Projeto',pi:4,pf:8,chs:12,cho:180,cha:60,chf:120,chv:60}];
+  const faltChs={EX3B:4,EX5B:4};
+  return {
+    info:{matricula:'0000000',nome:'Ana Exemplo da Silva',curso:'000 - Design',cursoCod:'000',cursoNome:'Design',turno:'Diurno',matriz:'900 - Matriz Exemplo',matrizCod:'900',periodo:'7',situacao:'Regular',ingresso:'1/2023',ingressoLabel:'2023/1',coefAbs:'0,7120',coefNorm:'0,5480',colacao:'--/--/----',campus:'Exemplo',emitido:''},
+    recs,matriz,conj,
+    enade:{ingressante:'Enade - Dispensado - Inep - Ano: 2023',concluinte:'Sem Registro.'},enadeIng:[],
+    chs:[],chsFaltTotal:8,limite:16,faltChs,bloq:[],
+    resumo:{obr:[obrTot,null,obrDone,obrTot-obrDone,obrDone],opt:[300,null,180,120,180],geral:[obrTot+300,null,obrDone+180,obrTot+300-obrDone-180,null]},
+    extensao:{f:300,g:120,h:180,sit:'Falta cumprir'},
+    matTerm:{a:2026,s:2}
+  };
+};
+
+</script>
 <script>
 (function(){
-  let h=null;try{h=JSON.parse(localStorage.getItem('sc-historico')||'null');}catch(e){}
-  const el=document.getElementById('me');
-  if(!h){return;}
-  const pend=(h.pend||[]).filter(p=>p.st!=='cur').length;
-  const d=new Date(h.t);
-  el.innerHTML=`<span class="pct">${h.pct}%</span><div><h3>${h.curso?h.curso+' · ':''}seu último histórico</h3><p>${(h.doneH||0).toLocaleString('pt-BR')} de ${(h.totalH||0).toLocaleString('pt-BR')} h integralizadas · ${pend} ${pend===1?'obrigatória pendente':'obrigatórias pendentes'} · lido em ${d.toLocaleDateString('pt-BR')}${h.prev?` · formatura prevista: <b style="color:var(--ink)">${h.prev}</b>`:''}</p></div><div class="acts"><a class="btn primary sm" href="/historico/">Enviar de novo</a><button class="btn ghost sm" type="button" id="me-clear">Apagar deste navegador</button></div>`;
-  el.hidden=false;el.className='me';
-  document.getElementById('me-clear').addEventListener('click',()=>{try{localStorage.removeItem('sc-historico');}catch(e){}el.hidden=true;});
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+const n1=v=>v==null?'—':v.toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1});
+const fh=v=>v==null?'—':Math.round(v).toLocaleString('pt-BR')+' h';
+const semOf=r=>r.a?r.a+'/'+r.s:'—';
+const key=r=>(r.a||0)*10+(r.s||0);
+const byDate=(a,b)=>key(b)-key(a);
+const plural=(n,a,b)=>n+' '+(n===1?a:b);
+const store={get(k){try{return JSON.parse(localStorage.getItem(k)||'null');}catch(e){return null;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+
+const DONE=new Set(['aprovada','aproveitada','suficiencia']);
+const ST={aprovada:{l:'Aprovada',cls:'ok'},suficiencia:{l:'Aprovada em exame de suficiência',cls:'ok'},aproveitada:{l:'Aproveitada',cls:'info'},reprovada:{l:'Reprovada',cls:'bad'},cancelada:{l:'Cancelada',cls:'off'},cursando:{l:'Cursando',cls:'warn'},outro:{l:'Outra situação',cls:'off'}};
+const MOT={n:'por nota',f:'por frequência',nf:'por nota e frequência',ex:'no exame de suficiência'};
+const KIND={obr:'Obrigatória',opt:'Optativa',eqv:'Equivalente',exa:'Exame de suficiência',ant:'Enriquecimento curricular',xt:'Externa',mat:'Matriculada'};
+const NODE={ok:'var(--lime)',info:'var(--blue-2)',bad:'var(--pink)',off:'#5A5A5A',warn:'var(--yellow)'};
+const ICON={
+ done:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+ cur:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 4.8V8l2.2 1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+ pend:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.4"/></svg>',
+ fail:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 5l6 6M11 5l-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+ wait:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h7M7.5 4.5L11 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 3v10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+ exam:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="10" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 6h5M5.5 9h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+ ext:'<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
+};
+const dots=n=>n?`<span class="dots" title="${plural(n,'reprovação','reprovações')}" aria-label="${plural(n,'reprovação','reprovações')}">${'<i></i>'.repeat(Math.min(n,6))}</span>`:'';
+
+let D=null, IS_EX=false, MARKS={}, MKEY='';
+const recs=()=>D.recs;
+const related=code=>D.recs.filter(r=>r.c===code||r.map===code);
+const MAT=()=>Object.values(D.matriz);
+const isMatrix=c=>!!D.matriz[c];
+const nameOf=c=>D.matriz[c]?D.matriz[c].n:((D.recs.find(r=>r.c===c)||{}).n||c);
+
+function info(code){
+  const rs=related(code);
+  const d=rs.filter(r=>DONE.has(r.st)).sort(byDate)[0];
+  const cur=rs.find(r=>r.st==='cursando');
+  const fails=rs.filter(r=>r.st==='reprovada').length;
+  let state,sub;
+  if(d){state='done';sub=d.st==='aproveitada'?'Aproveitada':d.st==='suficiencia'?'Exame de suficiência':'Aprovada '+semOf(d);}
+  else if(cur){state='cur';sub='Cursando';}
+  else if(fails){state='fail';sub='Reprovada';}
+  else{state='pend';sub='Não cursada';}
+  const mark=(state==='pend'||state==='fail')?MARKS[code]:null;
+  if(mark==='exam'){state='exam';sub='Exame solicitado';}
+  if(mark==='wait'){state='wait';sub='Aguardando registro';}
+  return {state,sub,fails,d,cur,rs};
+}
+
+/* ---------- modelo derivado ---------- */
+function model(){
+  const mat=MAT();
+  const st={};mat.forEach(m=>st[m.c]=info(m.c));
+  const pend=mat.filter(m=>st[m.c].state!=='done');
+  const r=D.resumo||{};
+  const obrTot=r.obr?r.obr[0]:mat.reduce((t,m)=>t+(m.ch||0),0);
+  const obrDone=r.obr?r.obr[2]:mat.filter(m=>st[m.c].state==='done').reduce((t,m)=>t+(m.ch||0),0);
+  const obrFalt=r.obr?r.obr[3]:obrTot-obrDone;
+  const known=pend.filter(m=>m.ch!=null).reduce((t,m)=>t+m.ch,0);
+  const unk=pend.filter(m=>m.ch==null);
+  const est=unk.length&&obrFalt-known>0?(obrFalt-known)/unk.length:null;
+  const chOf=m=>m.ch!=null?m.ch:est;
+  let oc=0,ow=0;pend.forEach(m=>{const s=st[m.c].state,h=chOf(m)||0;if(s==='cur'||s==='exam')oc+=h;if(s==='wait')ow+=h;});
+  const comps=[{key:'obr',n:'Disciplinas obrigatórias',total:obrTot,done:obrDone,cur:Math.min(oc,obrTot-obrDone),w:Math.min(ow,Math.max(0,obrTot-obrDone-oc)),falt:obrFalt}];
+  // optativas por conjunto
+  const conj=(D.conj||[]).map(c=>{
+    const gr=D.recs.filter(x=>x.g===c.id);
+    const kn=gr.filter(x=>x.ch!=null).map(x=>x.ch);const avg=kn.length?kn.reduce((a,b)=>a+b,0)/kn.length:null;
+    const curRecs=gr.filter(x=>x.st==='cursando');
+    const curCH=curRecs.reduce((t,x)=>t+(x.ch!=null?x.ch:(avg||0)),0);
+    const done=Math.min(c.cha,c.cho);
+    const rem=Math.max(0,c.cho-done-curCH);
+    const mark=rem>0?MARKS['conj:'+c.id]:null;
+    return Object.assign({},c,{done,curCH:Math.min(curCH,c.cho-done),rem,mark,curRecs,est:curRecs.some(x=>x.ch==null)});
+  });
+  conj.forEach(c=>comps.push({key:'conj:'+c.id,n:c.nome,total:c.cho,done:c.done,cur:c.curCH+(c.mark==='exam'?c.rem:0),w:c.mark==='wait'?c.rem:0,conj:c}));
+  if(!conj.length&&r.opt&&r.opt[0])comps.push({key:'opt',n:'Disciplinas optativas',total:r.opt[0],done:r.opt[2],cur:0,w:0});
+  const ext=D.extensao&&D.extensao.f?D.extensao:null;
+  let extC=null;
+  if(ext){const rem=Math.max(0,ext.f-ext.g);const mark=rem>0?MARKS['ext']:null;extC={key:'ext',n:'Atividades extensionistas',total:ext.f,done:Math.min(ext.g,ext.f),cur:0,w:mark==='wait'?rem:0,rem,mark,sit:ext.sit};comps.push(extC);}
+  const total=r.geral?r.geral[0]:comps.filter(c=>c.key!=='ext').reduce((t,c)=>t+c.total,0);
+  const done=r.geral?r.geral[2]:comps.filter(c=>c.key!=='ext').reduce((t,c)=>t+c.done,0);
+  const cursando=D.recs.filter(x=>x.st==='cursando');
+  const M0={st,pend,chOf,est,comps,conj,extC,total,done,cursando};
+  M0.prev=forecast(M0);
+  return M0;
+}
+
+/* ---------- previsão de formatura ---------- */
+const termAdd=(a,s,n)=>{let i=a*2+(s-1)+n;return {a:Math.floor(i/2),s:i%2+1};};
+const termLbl=t=>t.a+'/'+t.s;
+function forecast(M){
+  // carga em sala que falta: obrigatórias com carga conhecida + optativas
+  const cls=M.pend.filter(m=>m.ch!=null);
+  const acts=M.pend.filter(m=>m.ch==null);
+  const optRem=M.conj.reduce((t,c)=>t+Math.max(0,c.cho-c.done),0)||(!M.conj.length&&D.resumo&&D.resumo.opt?Math.max(0,D.resumo.opt[0]-D.resumo.opt[2]):0);
+  const obrCls=cls.reduce((t,m)=>t+m.ch,0);
+  const remaining=obrCls+optRem;
+  // o que já está encaminhado: cursando, exames marcados e optativas em curso/exame
+  let covered=0;
+  cls.forEach(m=>{const s=M.st[m.c].state;if(s==='cur'||s==='exam'||s==='wait')covered+=m.ch;});
+  M.conj.forEach(c=>{covered+=c.curCH+(c.mark?c.rem:0);});
+  const after=Math.max(0,remaining-covered);
+  const actsOpen=acts.filter(m=>M.st[m.c].state==='pend'||M.st[m.c].state==='fail');
+  const extOpen=M.extC&&M.extC.rem>0&&!M.extC.mark;
+  // ritmo: horas aprovadas por semestre nos últimos semestres cursados
+  // semestre de partida: o das matrículas do histórico; sem matrícula, o semestre atual do calendário (nunca um semestre que já passou)
+  const now=new Date();const nowT={a:now.getFullYear(),s:now.getMonth()<6?1:2};
+  const lastK=Math.max(0,...D.recs.filter(r=>r.a).map(r=>r.a*10+r.s));
+  let cur=D.matTerm||nowT;
+  if(!D.matTerm&&lastK>=nowT.a*10+nowT.s)cur=termAdd(Math.floor(lastK/10),lastK%10,1);
+  const curK=cur.a*10+cur.s;
+  const by={};D.recs.forEach(r=>{if(!r.a||r.st==='aproveitada')return;const k=r.a*10+r.s;if(k>=curK)return;(by[k]=by[k]||{ap:0,n:0});by[k].n++;if(r.st==='aprovada'||r.st==='suficiencia')by[k].ap+=(r.ch||0);});
+  const last=Object.keys(by).map(Number).sort((a,b)=>b-a).slice(0,4);
+  const pace=last.length?Math.max(30,last.reduce((t,k)=>t+by[k].ap,0)/last.length):null;
+  const nPer=Math.max(...MAT().map(m=>m.p||0),1);
+  const matrixPace=Math.round(M.total/nPer);
+  const scen=[];
+  const fin=n=>termAdd(cur.a,cur.s,Math.max(0,n-1));
+  // 1) com o que já está encaminhado
+  if(after===0)scen.push({k:'best',t:fin(1),l:'Se você for aprovado no que está cursando e nos exames marcados',d:'Toda a carga de disciplinas fica completa neste semestre.'});
+  else scen.push({k:'best',t:fin(1+Math.ceil(after/matrixPace)),l:'Aprovado no que está cursando, depois no ritmo da matriz',d:`Depois deste semestre ainda faltariam ${fh(after)} de disciplinas.`});
+  // 2) ritmo da matriz, sem contar o que está em curso
+  scen.push({k:'mat',t:fin(Math.max(1,Math.ceil(remaining/matrixPace))),l:`No ritmo da matriz (cerca de ${fh(matrixPace)} por semestre)`,d:`Faltam ${fh(remaining)} de disciplinas, contando o semestre atual.`});
+  // 3) ritmo da própria pessoa
+  if(pace)scen.push({k:'you',t:fin(Math.max(1,Math.ceil(remaining/pace))),l:`No seu ritmo dos últimos ${last.length} semestres (${fh(Math.round(pace))} aprovadas por semestre)`,d:`Média de horas aprovadas por semestre em ${last.sort((a,b)=>a-b).map(k=>Math.floor(k/10)+'/'+k%10).join(', ')}.`});
+  return {cur,remaining,covered,after,scen,actsOpen,extOpen,pace,matrixPace};
+}
+
+/* ---------- carregar ---------- */
+function load(data,example){
+  D=data;IS_EX=!!example;
+  MKEY='hist-marks-'+(D.info.matricula||'x')+(IS_EX?'-ex':'');
+  MARKS=(IS_EX?null:store.get(MKEY))||{};
+  $('#upload').hidden=true;$('#app').hidden=false;$('#ex-banner').hidden=!IS_EX;
+  if(!IS_EX)saveForGrade();
+  renderHero();renderAll();renderHist(true);renderSem();
+  if(!location.hash||location.hash==='#')history.replaceState(null,'','#resumo');
+  route(false);window.scrollTo(0,0);
+}
+/* resumo salvo no navegador para a página de grade e a Home */
+function saveForGrade(){
+  try{
+    const M=model();
+    const pend=M.pend.map(m=>({c:m.c,n:m.n,p:m.p||null,ch:m.ch,st:M.st[m.c].state,fails:M.st[m.c].fails}));
+    const done=[...new Set(D.recs.filter(r=>DONE.has(r.st)).flatMap(r=>[r.c,r.map].filter(Boolean)))];
+    const equiv={};D.recs.forEach(r=>{if(r.map)equiv[r.c]=r.map;});
+    const conj=M.conj.map(c=>({id:c.id,nome:c.nome,cho:c.cho,done:c.done,rem:c.rem,codes:[...new Set(D.recs.filter(r=>r.g===c.id).map(r=>r.c))]}));
+    const ext=M.extC?{total:M.extC.total,done:M.extC.done}:null;
+    localStorage.setItem('sc-historico',JSON.stringify({v:1,t:Date.now(),curso:D.info.cursoNome,cursoCod:D.info.cursoCod,matriz:D.info.matrizCod,periodo:D.info.periodo,emitido:D.info.emitido,pct:M.total?Math.round(M.done/M.total*100):0,doneH:M.done,totalH:M.total,pend,done,equiv,conj,ext,cursando:M.cursando.map(r=>r.map||r.c),prev:M.prev?termLbl(M.prev.scen[0].t):null}));
+  }catch(e){}
+}
+function setMark(k,v){if(v==='pend')delete MARKS[k];else MARKS[k]=v;if(!IS_EX){store.set(MKEY,MARKS);}renderAll();if(!IS_EX)saveForGrade();if(!$('#drawer').hidden&&openCode)openDrawer(openCode,lastFocus,true);}
+function segFor(k,cur,opts){
+  opts=opts||['pend','exam','wait'];const L={pend:'Pendente',exam:'Exame solicitado',wait:'Feito, aguardando registro'};
+  return `<div class="seg" role="group" aria-label="Marcar situação">${opts.map(v=>`<button type="button" data-mark="${esc(k)}" data-v="${v}" aria-pressed="${(cur||'pend')===v}">${L[v]}</button>`).join('')}</div>`;
+}
+
+/* ---------- hero ---------- */
+function renderHero(){
+  const I=D.info;
+  $('#h-eyebrow').innerHTML=`<b>${esc(I.cursoNome||'Curso')}</b> . UTFPR${I.campus?' . '+esc(I.campus):''} .`;
+  $('#h-name').textContent=I.nome||'Estudante';
+  $('#h-sub').textContent=[I.matricula&&'Matrícula '+I.matricula,I.cursoCod&&'Curso '+I.cursoCod,I.matrizCod&&'Matriz '+I.matrizCod,I.turno,I.ingressoLabel&&'Ingresso '+I.ingressoLabel].filter(Boolean).join(' · ');
+  $('#h-ring').textContent=`Matriz ${I.matrizCod||'—'} ✱ Ingresso ${I.ingressoLabel||'—'} ✱ ${I.cursoNome||''} ✱`;
+  $('#h-stats').innerHTML=[['Período',I.periodo?I.periodo+'º':'—'],['Situação',I.situacao||'—',1],['Coef. absoluto',I.coefAbs||'—'],['Coef. normalizado',I.coefNorm||'—']].map(([t,v,h])=>`<div><dt>${t}</dt><dd${h?' class="hl"':''}>${esc(v)}</dd></div>`).join('');
+  $('#f-src').textContent=`Dados do Histórico Escolar${I.emitido?' emitido em '+I.emitido:''}. Versão web, não vale como documento.`;
+}
+
+/* ---------- resumo ---------- */
+function renderAll(){
+  const M=model();
+  const pct=M.total?M.done/M.total*100:0;
+  $('#h-pct').textContent=Math.round(pct)+'%';
+  $('#p-big').textContent=fh(M.done);$('#p-of').textContent='de '+fh(M.total)+' do curso';$('#p-pct').textContent=Math.round(pct)+'%';
+  $('#p-bar').innerHTML=`<span class="d" style="width:${pct}%"></span>`;$('#p-bar').setAttribute('role','img');$('#p-bar').setAttribute('aria-label',Math.round(pct)+'% da carga horária integralizada');
+  $('#comps').innerHTML=M.comps.map(c=>{
+    const pd=c.total?c.done/c.total*100:0,pc=c.total?c.cur/c.total*100:0,pw=c.total?c.w/c.total*100:0;
+    const falt=Math.max(0,c.total-c.done);
+    let note='';
+    if(falt===0)note='<b>Concluído.</b>';
+    else{
+      const parts=[`Faltam <b>${fh(falt)}</b>`];
+      if(c.cur)parts.push(`${fh(c.cur)} em curso ou em exame`);
+      if(c.w)parts.push(`${fh(c.w)} aguardando registro`);
+      note=parts.join(' · ')+'.';
+    }
+    if(c.conj){if(c.conj.cha>c.conj.cho)note+=` ${fh(c.conj.cha)} aprovadas; ${fh(c.conj.cho)} contam.`;
+      if(c.conj.chv<c.conj.done)note+=` O sistema mostra ${fh(c.conj.chv)} validadas neste conjunto.`;
+      if(c.conj.est)note+=' Alguma disciplina em curso não tem carga informada; usei a média do conjunto.';}
+    if(c.key==='obr'&&M.est&&falt>0)note+=` Atividades sem carga informada no histórico (estágio, atividades complementares) foram estimadas dividindo o restante.`;
+    if(c.key==='ext'&&falt>0)note+=` Situação no sistema: <b>${esc(c.sit||'falta cumprir')}</b>.`;
+    return `<div class="comp"><div class="comp-top"><strong>${esc(c.n)}</strong><span class="v">${Math.round(c.done).toLocaleString('pt-BR')} / ${fh(c.total)}</span></div>
+    <div class="bar" role="img" aria-label="${esc(c.n)}: ${Math.round(c.done)} de ${c.total} horas"><span class="d" style="width:${pd}%"></span><span class="c" style="width:${pc}%"></span><span class="w" style="width:${pw}%"></span></div><p class="comp-note">${note}</p></div>`;
+  }).join('');
+
+  // cenário
+  const left=[];
+  M.pend.forEach(m=>{const s=M.st[m.c].state;if(s==='pend'||s==='fail')left.push(m.n);});
+  M.conj.forEach(c=>{if(c.rem>0&&!c.mark)left.push(`${fh(c.rem)} de ${c.nome}`);});
+  if(M.extC&&M.extC.rem>0&&!M.extC.mark)left.push(`${fh(M.extC.rem)} de extensão`);
+  const enadeOk=D.enade&&D.enade.concluinte&&!/sem registro/i.test(D.enade.concluinte);
+  const proj=M.comps.filter(c=>c.key!=='ext').reduce((t,c)=>t+Math.min(c.total,c.done+c.cur+c.w),0);
+  const allDone=M.comps.every(c=>c.done>=c.total);
+  $('#scenario').innerHTML=allDone?`<span class="k">${fh(M.total)}</span><p><b>Toda a carga horária do curso está cumprida.</b>${enadeOk?'':' <span>Confira a situação do ENADE concluinte.</span>'}</p>`
+   :!left.length?`<span class="k">${fh(M.total)}</span><p>Se você for aprovado no que está cursando e nos exames marcados, e o que está aguardando registro for lançado, <b>toda a carga horária do curso fica cumprida</b>.${enadeOk?'':' <span>Resta o ENADE concluinte.</span>'}</p>`
+   :`<span class="k">${fh(proj)}</span><p>É o que você teria sendo aprovado no que está cursando e nos exames marcados, com os registros lançados. <span>Ainda ficariam faltando: ${esc(left.slice(0,6).join(', '))}${left.length>6?' e mais '+(left.length-6):''}.</span></p>`;
+
+  // lista do que falta
+  const G={cur:[],exam:[],wait:[],pend:[]};
+  M.cursando.forEach(r=>{
+    const target=r.map||r.c;const m=D.matriz[target];const i=info(target);
+    const type=m?`Obrigatória${m.p?' · '+m.p+'º período':''}`:(r.g?(D.conj.find(c=>c.id===r.g)||{}).nome||'Optativa':KIND[r.k]||'Matriculada');
+    const ch=m&&m.ch!=null?m.ch:r.ch;
+    G.cur.push(`<li><button class="pitem" type="button" data-code="${esc(target)}"><span class="mk cur">${ICON.cur}</span><span class="nm">${esc(nameOf(target))}</span><span class="mt">${esc(type)}${r.map?' · matriculado como '+esc(r.c):''}</span><span class="rt"><span>${ch!=null?ch+' h':'—'}</span>${dots(i.fails)}</span></button></li>`);
+  });
+  M.pend.forEach(m=>{const i=M.st[m.c];if(i.state==='cur')return;
+    const grp=i.state==='exam'?'exam':i.state==='wait'?'wait':'pend';
+    const h=M.chOf(m);const hs=m.ch!=null?m.ch+' h':(h?'~'+Math.round(h)+' h':'—');
+    G[grp].push(`<li class="pwrap"><button class="pitem" type="button" data-code="${esc(m.c)}"><span class="mk ${grp}">${ICON[grp]}</span><span class="nm">${esc(m.n)}</span><span class="mt">Obrigatória${m.p?' · '+m.p+'º período':''} · ${esc(m.c)}</span><span class="rt"><span>${hs}</span>${dots(i.fails)}</span></button>${segFor(m.c,MARKS[m.c])}</li>`);
+  });
+  M.conj.forEach(c=>{if(c.rem<=0)return;const grp=c.mark||'pend';
+    G[grp].push(`<li class="pwrap"><div class="pitem"><span class="mk ${grp}">${ICON[grp]}</span><span class="nm">${esc(c.nome)}</span><span class="mt">Optativas: faltam ${fh(c.rem)}${c.curCH?' além das que estão em curso':''}</span><span class="rt"><span>${fh(c.rem)}</span></span></div>${segFor('conj:'+c.id,c.mark)}</li>`);});
+  if(M.extC&&M.extC.rem>0){const grp=M.extC.mark||'pend';
+    G[grp].push(`<li class="pwrap"><div class="pitem"><span class="mk ${grp==='pend'?'ext':grp}">${ICON[grp==='pend'?'ext':grp]}</span><span class="nm">Atividades extensionistas</span><span class="mt">Carga extensionista ainda não registrada</span><span class="rt"><span>${fh(M.extC.rem)}</span></span></div>${segFor('ext',M.extC.mark,['pend','wait'])}</li>`);}
+  if(!enadeOk)G.pend.push(`<li><div class="pitem"><span class="mk pend">${ICON.pend}</span><span class="nm">ENADE concluinte</span><span class="mt">${esc(D.enade&&D.enade.concluinte?D.enade.concluinte:'Sem registro')} Confirme a inscrição com a coordenação.</span><span class="rt"><span></span></span></div></li>`);
+  const term=D.matTerm?D.matTerm.a+'/'+D.matTerm.s:'';
+  const sec=(t,arr)=>arr.length?`<h4>${t}</h4><ul>${arr.join('')}</ul>`:'';
+  $('#todo').innerHTML=sec('Em curso agora'+(term?' · '+term:''),G.cur)+sec('Exames de suficiência solicitados',G.exam)+sec('Feito, aguardando registro no sistema',G.wait)+sec('Ainda pendente',G.pend)||'<p class="lede">Nada pendente.</p>';
+
+  // coluna lateral
+  const side=[];
+  {const F=M.prev;const main=F.scen[0];const others=F.scen.slice(1);
+   const pend=[...F.actsOpen.map(m=>m.n),F.extOpen?'horas de extensão':''].filter(Boolean);
+   const allDoneNow=F.remaining===0;
+   side.push(`<section class="card alert" aria-labelledby="h-prev"><div class="row"><span class="tag ok">Previsão</span></div>
+     <h3 id="h-prev">Previsão de formatura</h3>
+     <p style="font-size:12.5px">Calculada agora a partir deste histórico${D.info.emitido?' (emitido em '+esc(D.info.emitido)+')':''}, começando em ${termLbl(F.cur)}${D.matTerm?', o semestre das suas matrículas atuais':''}.</p>
+     ${allDoneNow?`<p><b>Todas as disciplinas já estão concluídas.</b></p>`:`<div class="headline" style="margin-top:2px"><span class="big" style="font-size:44px">${termLbl(main.t)}</span><span class="of">fim do semestre</span></div><p>${esc(main.l)}. ${esc(main.d)}</p>`}
+     ${others.length&&!allDoneNow?`<ul class="mini-list">${others.map(o=>`<li><button type="button" tabindex="-1" style="cursor:default"><span class="n">${esc(o.l)}</span><b class="mono">${termLbl(o.t)}</b></button></li>`).join('')}</ul>`:''}
+     ${pend.length?`<p>Também precisa estar registrado: ${esc(pend.join(', '))}. Atividades sem turma podem ser feitas em paralelo às disciplinas.</p>`:''}
+     <p style="font-size:12.5px">A previsão é uma estimativa: não considera pré-requisitos, oferta de turmas nem o prazo máximo do curso. A colação acontece depois do fim do semestre, no calendário da UTFPR.</p>
+   </section>`);}
+  if(D.chsFaltTotal!=null){
+    const tot=D.chsFaltTotal,lim=D.limite||16;
+    let proj=tot;Object.entries(D.faltChs||{}).forEach(([c,v])=>{const s=M.st[c]?M.st[c].state:'pend';if(s==='cur'||s==='exam'||s==='wait'||s==='done')proj-=v;});
+    proj=Math.max(0,proj);
+    const scale=Math.max(lim+4,tot+2,20);const P=v=>Math.min(100,v/scale*100);
+    const ticks=[0,1,2,3,4].map(i=>Math.round(scale*i/4));
+    const fl=Object.entries(D.faltChs||{}).map(([c,v])=>`${esc(nameOf(c))} (${v})`).join(', ');
+    side.push(`<section class="card alert" aria-labelledby="h-rule"><div class="row"><span class="tag ${tot>=lim?'bad':tot>=lim-4?'warn':'ok'}">${tot>=lim?'Acima do limite':tot>=lim-4?'Atenção':'Dentro do limite'}</span></div>
+      <h3 id="h-rule">Regra de avanço de período</h3>
+      <p>Com <b>${lim} ou mais aulas semanais</b> de disciplinas faltantes você não avança de período. Hoje faltam <b>${tot.toLocaleString('pt-BR')}</b>.</p>
+      <div class="meter" role="img" aria-label="${tot} aulas semanais faltantes, limite de ${lim}. Projeção: ${proj}.">
+        <div class="track"><div class="fill" style="width:${P(tot)}%"></div></div><span class="cur" style="left:${P(tot)}%">${tot.toLocaleString('pt-BR')}</span>
+        <div class="lim" style="left:${P(lim)}%"><span>limite ${lim}</span></div>${proj!==tot?`<div class="proj" style="left:${P(proj)}%"><span>${proj.toLocaleString('pt-BR')} na projeção</span></div>`:''}
+      </div><div class="ticks">${ticks.map(t=>`<span>${t}</span>`).join('')}</div>
+      ${fl?`<p>Faltantes: ${fl}.${proj!==tot?' A projeção considera aprovação no que está em curso ou em exame.':''}</p>`:''}
+      ${D.chs&&D.chs.length?`<details class="more"><summary>Ver o quadro de carga horária semanal</summary><div class="tbl-wrap"><table class="chs"><thead><tr><th>Período</th><th>Obrig. previstas</th><th>Obrig. cursadas</th><th>Saldo obrig.</th><th>Optat. previstas</th><th>Optat. cursadas</th><th>Saldo optat.</th><th>Saldo total</th></tr></thead><tbody>${D.chs.map(r=>{const v=[r[0],r[1],r[2],r[3],r[4],r[5],r[7],r[10]];return `<tr>${v.map((x,i)=>i===0?`<td>${x}º</td>`:`<td${x<0?' class="neg"':''}>${x==null?'—':x.toLocaleString('pt-BR',{minimumFractionDigits:x%1?2:0,maximumFractionDigits:2})}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div><p class="comp-note">Saldos acumulados em aulas por semana. Negativo indica carga atrasada em relação à matriz.</p></details>`:''}
+    </section>`);
+  }
+  const rep=M.pend.filter(m=>M.st[m.c].fails>0).sort((a,b)=>M.st[b.c].fails-M.st[a.c].fails);
+  if(rep.length)side.push(`<section class="card alert"><div class="row"><span class="tag bad">Prioridade</span></div><h3>Pendentes com reprovações</h3><p>Cada ponto é uma reprovação na disciplina, contando equivalentes e exames de suficiência. O regulamento (RODP, Art. 57) prevê risco de desligamento para reprovações repetidas.</p><ul class="mini-list">${rep.map(m=>`<li><button type="button" data-code="${esc(m.c)}"><span class="n">${esc(m.n)}</span>${dots(M.st[m.c].fails)}</button></li>`).join('')}</ul></section>`);
+  if(M.extC){const e=M.extC;const ok=e.done>=e.total;
+    side.push(`<section class="card alert"><div class="row"><span class="tag ${ok?'ok':e.mark==='wait'?'info':'warn'}">${ok?'Cumprido':e.mark==='wait'?'Aguardando registro':'Falta cumprir'}</span></div><h3>Atividades extensionistas</h3><p><b>${fh(e.done)} de ${fh(e.total)}</b> registradas.${!ok&&e.mark==='wait'?' Você marcou o restante como feito; leve os comprovantes à coordenação para o lançamento.':!ok?' Se você já cumpriu, marque como “aguardando registro” na lista ao lado.':''}</p></section>`);}
+  if(D.enade){side.push(`<section class="card alert"><div class="row"><span class="tag ${enadeOk?'ok':'off'}">${enadeOk?'Registrado':'Sem registro'}</span></div><h3>ENADE</h3><p>Ingressante: <b>${esc(D.enade.ingressante||'sem registro')}</b>. Concluinte: <b>${esc(D.enade.concluinte||'sem registro')}</b>. O ENADE é componente curricular obrigatório (Lei 10.861/2004).</p></section>`);}
+  const bl=blocksInfo();
+  side.push(`<section class="card alert"><div class="row"><span class="tag ${bl.active?'bad':'ok'}">${bl.active?plural(bl.active,'bloqueio ativo','bloqueios ativos'):'Sem bloqueios ativos'}</span></div><h3>Bloqueios de matrícula</h3><p>${bl.list.length?`${plural(bl.list.length,'bloqueio aparece','bloqueios aparecem')} no histórico${bl.active?'':', todos resolvidos'}. <a class="lnk" href="#semestres">Ver na linha do tempo</a>`:'Nenhum bloqueio registrado.'}</p></section>`);
+  $('#side').innerHTML=side.join('');
+
+  // fitas
+  const ncur=M.cursando.length;const npend=M.pend.filter(m=>M.st[m.c].state!=='cur').length;
+  const best=D.recs.filter(r=>DONE.has(r.st)&&r.m!=null&&r.m>=10&&r.k!=='ant').sort(byDate)[0];
+  ribFill('#rib-a',[fh(M.done)+' integralizadas',plural(ncur,'disciplina em curso','disciplinas em curso'),npend?plural(npend,'obrigatória pendente','obrigatórias pendentes'):'Obrigatórias em dia',best?`${best.n} com nota 10`:null,'Meta: '+fh(M.total)].filter(Boolean));
+  const I=D.info;ribFill('#rib-b',[(I.cursoNome||'Curso')+' . UTFPR',I.matrizCod&&'Matriz '+I.matrizCod,I.ingressoLabel&&'Ingresso '+I.ingressoLabel,I.periodo&&I.periodo+'º período',I.situacao&&'Situação '+I.situacao].filter(Boolean));
+  renderMatriz(M);
+}
+function ribFill(id,arr){const h=arr.map(t=>`<span>${esc(t)}</span>`).join('');$(id).innerHTML=h+h+h+h;}
+function blocksInfo(){
+  const list=(D.bloq||[]).slice();let active=0;
+  list.forEach((b,i)=>{if(/^Bloquead/i.test(b.sit)){const r=list.slice(i+1).find(x=>/^Desbloquead/i.test(x.sit)&&x.tipo===b.tipo);b.res=r||null;if(!r)active++;}});
+  return {list:list.filter(b=>/^Bloquead/i.test(b.sit)),active};
+}
+
+/* ---------- matriz ---------- */
+function tile(c,n,ch,i){
+  const label=`${n}, ${c}. ${i.sub}${i.fails?'. '+plural(i.fails,'reprovação','reprovações'):''}`;
+  return `<button class="tile ${i.state}" type="button" data-code="${esc(c)}" aria-label="${esc(label)}"><span class="tcode">${esc(c)}</span><span class="tname">${esc(n)}</span><span class="tmeta"><span class="tstat">${ICON[i.state==='done'?'done':i.state]}${esc(i.sub)}</span><span class="tch">${ch!=null?ch+' h':'—'}</span></span>${dots(i.fails)}</button>`;
+}
+function renderMatriz(M){
+  const by={};MAT().forEach(m=>{const k=m.p||0;(by[k]=by[k]||[]).push(m);});
+  const ks=Object.keys(by).map(Number).sort((a,b)=>(a||99)-(b||99));
+  const el=$('#matrix');el.style.setProperty('--cols',Math.max(1,ks.length));
+  el.innerHTML=ks.map(k=>{const items=by[k].sort((a,b)=>a.c.localeCompare(b.c));const d=items.filter(m=>M.st[m.c].state==='done').length;
+    return `<section class="mcol" aria-label="${k?k+'º período':'Sem período'}"><header><h3>${k?k+'º período':'Outras'}</h3><span>${d}/${items.length}</span></header><div class="mlist">${items.map(m=>tile(m.c,m.n,m.ch,M.st[m.c])).join('')}</div></section>`;}).join('');
+  // optativas
+  const optCodes=g=>[...new Set(D.recs.filter(r=>(g===null?(r.g==null&&(r.k==='opt'||r.k==='mat'||(r.k==='exa'&&!isMatrix(r.c)))):r.g===g)).map(r=>r.c))];
+  const order={done:0,cur:1,exam:2,wait:3,fail:4,pend:5};
+  const tilesFor=codes=>codes.map(c=>({c,i:info(c),r:D.recs.find(x=>x.c===c&&x.ch!=null)||D.recs.find(x=>x.c===c)})).sort((a,b)=>order[a.i.state]-order[b.i.state]).map(o=>tile(o.c,o.r.n,o.r.ch,o.i)).join('');
+  const groups=M.conj.map(c=>{const codes=optCodes(c.id);
+    return `<div class="optgroup"><div class="gh"><h3>${esc(c.nome)}</h3><span>${fh(c.cha).replace(' h','')} / ${fh(c.cho)}</span></div>${codes.length?`<div class="tiles">${tilesFor(codes)}</div>`:''}<p class="note">${c.cha>=c.cho?'Conjunto completo.':`Faltam ${fh(c.cho-c.done)}.`}${c.curCH&&c.cha<c.cho?` Com as que estão em curso aprovadas, faltariam ${fh(c.rem)}.`:''}</p></div>`;});
+  const other=optCodes(null);
+  if(other.length)groups.push(`<div class="optgroup"><div class="gh"><h3>Outras optativas e matrículas</h3><span>sem conjunto identificado</span></div><div class="tiles">${tilesFor(other)}</div><p class="note">O histórico não diz a qual conjunto estas disciplinas pertencem.</p></div>`);
+  $('#opt-area').innerHTML=groups.length?`<h3 class="sec-title">Optativas</h3><p class="comp-note" style="margin-bottom:14px">As optativas não têm período fixo; basta completar a carga horária de cada conjunto.</p><div class="optgrid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))">${groups.join('')}</div>`:'';
+}
+
+/* ---------- histórico ---------- */
+const FST=[['aprovada','Aprovada','var(--lime)'],['aproveitada','Aproveitada','var(--blue-2)'],['reprovada','Reprovada','var(--pink)'],['cancelada','Cancelada','#5A5A5A'],['cursando','Cursando','var(--yellow)']];
+const grp=st=>st==='suficiencia'?'aprovada':st;
+function chip(r){const s=ST[r.st]||ST.outro;const why=r.st==='reprovada'&&r.mot?`<span class="why">${MOT[r.mot]}</span>`:r.st==='aproveitada'?'<span class="why">crédito consignado</span>':r.st==='outro'&&r.lbl?`<span class="why">${esc(r.lbl)}</span>`:'';return `<span class="chip ${s.cls}">${s.l}</span>${why}`;}
+function renderHist(init){
+  if(init){
+    $('#cnt-hist').textContent=D.recs.length;
+    const kinds=[...new Set(D.recs.map(r=>r.k))];
+    $('#fk').innerHTML='<option value="">Todas as origens</option>'+kinds.map(k=>`<option value="${k}">${KIND[k]}</option>`).join('');
+    $('#fchips').innerHTML=FST.map(([k,l,c])=>`<button class="fchip" type="button" aria-pressed="false" data-st="${k}"><span class="dot" style="background:${c}"></span>${l}</button>`).join('');
+    $('#q').value='';
+  }
+  const q=norm($('#q').value),k=$('#fk').value;
+  const on=new Set([...document.querySelectorAll('.fchip[aria-pressed="true"]')].map(b=>b.dataset.st));
+  const rows=D.recs.filter(r=>(!k||r.k===k)&&(!on.size||on.has(grp(r.st)))&&(!q||norm(r.c+' '+r.n+' '+(r.p||'')+' '+(r.map||'')).includes(q))).sort((a,b)=>byDate(a,b)||a.c.localeCompare(b.c));
+  $('#hbody').innerHTML=rows.map(r=>{
+    const extra=r.map?` · conta como <span class="mono">${esc(r.map)}</span>`:'';
+    return `<tr><td class="c-sem mono">${semOf(r)}</td><td class="c-dis"><button class="link" type="button" data-code="${esc(r.c)}">${esc(r.n)}</button><span class="sub2"><span class="mono">${esc(r.c)}</span> · ${KIND[r.k]||r.k}${extra}</span><span class="m-nums">CH ${r.ch!=null?r.ch+' h':'—'} · média ${n1(r.m)} · freq. ${r.f==null?'—':n1(r.f)+'%'}</span></td>
+    <td class="r c-num">${r.ch!=null?r.ch:'—'}</td><td class="r c-num">${n1(r.m)}</td><td class="r c-num">${r.f==null?'—':n1(r.f)+'%'}</td><td class="c-st">${chip(r)}</td><td class="c-prof">${esc(r.p||'')}</td></tr>`;}).join('');
+  $('#hempty').hidden=rows.length>0;
+  $('#rcount').textContent=`${plural(rows.length,'tentativa','tentativas')} ${rows.length===D.recs.length?'no total':'de '+D.recs.length}`;
+  $('#clear').hidden=!(q||k||on.size);
+}
+$('#q').addEventListener('input',()=>renderHist());
+$('#fk').addEventListener('change',()=>renderHist());
+$('#fchips').addEventListener('click',e=>{const b=e.target.closest('.fchip');if(!b)return;b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true');renderHist();});
+$('#clear').addEventListener('click',()=>{$('#q').value='';$('#fk').value='';document.querySelectorAll('.fchip').forEach(b=>b.setAttribute('aria-pressed','false'));renderHist();});
+
+/* ---------- semestres ---------- */
+const ORD={aprovada:0,suficiencia:0,aproveitada:1,cursando:2,reprovada:3,cancelada:4,outro:5};
+function renderSem(){
+  const ev={};const add=(k,e)=>{(ev[k]=ev[k]||[]).push(e);};
+  const ig=(D.info.ingresso||'').match(/(\d)\s*\/\s*(\d{4})/);
+  const g={};D.recs.filter(r=>r.a).forEach(r=>{(g[r.a+'-'+r.s]=g[r.a+'-'+r.s]||[]).push(r);});
+  if(ig){const k=ig[2]+'-'+ig[1];const cc=(g[k]||[]).filter(r=>r.st==='aproveitada').length;add(k,{c:'info',t:'Ingresso no curso',d:cc?`${plural(cc,'disciplina registrada','disciplinas registradas')} como crédito consignado.`:'Primeiro semestre no curso.'});}
+  Object.entries(g).forEach(([k,rs])=>{const n=rs.filter(r=>r.mm).length;if(n>=3)add(k,{c:'info',t:'Mudança de matriz',d:`${plural(n,'disciplina aproveitada','disciplinas aproveitadas')} da matriz anterior.`});});
+  blocksInfo().list.forEach(b=>add(b.a+'-'+b.s,{c:'block',t:'Bloqueio: '+b.tipo.toLowerCase(),d:`${b.data} · ${b.desc}${b.res?` Desbloqueado em ${b.res.data}${b.res.desc?' ('+b.res.desc.replace(/\.$/,'').toLowerCase()+')':''}.`:' Ainda ativo.'}`}));
+  Object.keys(ev).forEach(k=>{if(!g[k])g[k]=[];});
+  const keys=Object.keys(g).sort((a,b)=>{const[ya,sa]=a.split('-').map(Number),[yb,sb]=b.split('-').map(Number);return (yb*10+sb)-(ya*10+sa);});
+  $('#tl').innerHTML=keys.map(k=>{
+    const rs=g[k].sort((a,b)=>(ORD[a.st]??5)-(ORD[b.st]??5)||(b.ch||0)-(a.ch||0));
+    const [y,s]=k.split('-');const cnt=st=>rs.filter(r=>st.includes(r.st)).length;
+    const chAp=rs.filter(r=>r.st==='aprovada'||r.st==='suficiencia').reduce((t,r)=>t+(r.ch||0),0);
+    const parts=[];const P=(n,a,b)=>n?parts.push(`<b>${n}</b> ${n===1?a:b}`):0;
+    P(cnt(['aprovada','suficiencia']),'aprovada'+(chAp?` (${chAp} h)`:''),'aprovadas'+(chAp?` (${chAp} h)`:''));P(cnt(['aproveitada']),'aproveitada','aproveitadas');P(cnt(['reprovada']),'reprovada','reprovadas');P(cnt(['cancelada']),'cancelada','canceladas');P(cnt(['cursando']),'em curso','em curso');
+    const total=rs.reduce((t,r)=>t+(r.ch||0),0);
+    const lab=r=>`${r.n} (${r.c}): ${(ST[r.st]||ST.outro).l}`;
+    const bar=rs.length?`<div class="sbar">${rs.map(r=>`<button type="button" class="s-${r.st}" style="flex:${r.ch||45} 1 0" data-code="${esc(r.c)}" title="${esc(lab(r))}" aria-label="${esc(lab(r))}">${esc(r.c)}</button>`).join('')}</div>`:'';
+    const list=rs.map(r=>`<button type="button" data-code="${esc(r.c)}"><span class="dot d-${r.st}"></span>${esc(r.n)}${r.k==='exa'?' (exame)':''}</button>`).join('');
+    const evs=(ev[k]||[]).map(e=>`<div class="event ${e.c}"><p><b>${esc(e.t)}.</b> ${esc(e.d)}</p></div>`).join('');
+    const isCur=D.matTerm&&+y===D.matTerm.a&&+s===D.matTerm.s;
+    return `<div class="srow"><div class="slabel"><div class="y">${y}/${s}</div><div class="t">${isCur?'atual':rs.length?plural(rs.length,'registro','registros')+' · '+total+' h':''}</div></div><div style="min-width:0">${bar}<div class="ssum">${parts.join('<span aria-hidden="true">·</span>')}</div><div class="slist">${list}</div>${evs}</div></div>`;
+  }).join('');
+}
+
+/* ---------- painel ---------- */
+let lastFocus=null,openCode=null;
+function openDrawer(code,trigger,keep){
+  lastFocus=trigger||document.activeElement;openCode=code;
+  const i=info(code),m=D.matriz[code],own=D.recs.find(r=>r.c===code)||{};
+  const name=nameOf(code);const rs=i.rs.slice().sort(byDate);
+  let kind=m?`Obrigatória${m.p?' · '+m.p+'º período da matriz':''}`:own.g?((D.conj.find(c=>c.id===own.g)||{}).nome||'Optativa'):(KIND[own.k]||'');
+  $('#d-code').textContent=code;$('#d-title').textContent=name;$('#d-kind').textContent=kind;
+  const chv=m?m.ch:(D.recs.find(r=>r.c===code&&r.ch!=null)||{}).ch;
+  const stLabel={done:'Concluída',cur:'Cursando',fail:'Reprovada',pend:'Não cursada',wait:'Aguardando registro',exam:'Exame solicitado'}[i.state];
+  let h=`<dl class="dfacts"><div><dt>Situação</dt><dd>${stLabel}</dd></div><div><dt>Carga horária</dt><dd>${chv!=null?chv+' h':'não informada'}</dd></div><div><dt>Reprovações</dt><dd>${i.fails}</dd></div></dl>`;
+  if(m&&(i.state==='pend'||i.state==='fail'||i.state==='exam'||i.state==='wait'))h+=`<div class="mark-block"><p>Marque se você pediu exame de suficiência ou se já cumpriu e falta o registro:</p>${segFor(code,MARKS[code])}</div>`;
+  const notes=[];
+  if(own.map)notes.push(`Cursada como equivalente de <b>${esc(nameOf(own.map))}</b> (${esc(own.map)}). Aprovação aqui conta para essa obrigatória.`);
+  if(own.gGuess&&own.g)notes.push('O conjunto de optativas foi deduzido pelo nome e período; o histórico só informa o conjunto das optativas aprovadas.');
+  if(i.d&&i.d.st==='aproveitada'&&!i.d.from)notes.push('Registrada como <b>crédito consignado</b> (aproveitamento).');
+  if(i.d&&i.d.from)notes.push(`Aproveitada a partir de <b>${esc(i.d.from)}</b>, da matriz anterior.`);
+  if(m&&m.ch==null)notes.push('O histórico não informa a carga horária desta atividade.');
+  if(notes.length)h+=`<div class="dnote">${notes.join('<br>')}</div>`;
+  if(rs.length){
+    h+=`<div class="dsec"><h3>Tentativas</h3><ol class="attempts">${rs.map(r=>{const s=ST[r.st]||ST.outro;
+      const via=r.c!==code?`<div class="d">como <span class="mono">${esc(r.c)}</span> ${esc(r.n)}${r.k==='exa'?' (exame de suficiência)':''}</div>`:(r.k==='exa'?'<div class="d">Exame de suficiência</div>':'');
+      const mot=r.st==='reprovada'&&r.mot?' '+MOT[r.mot]:'';
+      const nums=r.st==='cursando'?'Em andamento':`Média <span class="mono">${n1(r.m)}</span> · Frequência <span class="mono">${r.f==null?'—':n1(r.f)+'%'}</span>`;
+      const meta=[r.t?'Turma '+r.t:'',r.p].filter(Boolean).join(' · ');
+      return `<li><span class="node" style="background:${NODE[s.cls]}"></span><div class="h"><span class="sem">${semOf(r)}</span><span class="chip ${s.cls}">${s.l}${mot}</span></div>${via}<div class="d">${nums}</div>${meta?`<div class="d">${esc(meta)}</div>`:''}</li>`;}).join('')}</ol></div>`;
+  }else h+=`<div class="dnote">Nenhuma tentativa registrada ainda.</div>`;
+  const rel=new Map();
+  rs.forEach(r=>{if(r.from)rel.set(r.from,'Cursada na matriz anterior e usada no aproveitamento');});
+  if(own.map)rel.set(own.map,'Obrigatória que esta disciplina substitui');
+  D.recs.filter(r=>r.from===code).forEach(r=>rel.set(r.c,'Disciplina da matriz atual aproveitada a partir desta'));
+  const nn=norm(name);D.recs.filter(r=>norm(r.n)===nn&&r.c!==code&&r.map!==code).forEach(r=>{if(!rel.has(r.c))rel.set(r.c,'Mesmo nome, outro código');});
+  rel.delete(code);
+  if(rel.size)h+=`<div class="dsec"><h3>Relacionadas</h3><ul class="rel">${[...rel].map(([c,why])=>`<li><button type="button" data-code="${esc(c)}"><div class="r1">${esc(nameOf(c))} <span class="mono" style="font-weight:400;color:var(--muted)">${esc(c)}</span></div><div class="r2">${why} · ${plural(related(c).length,'registro','registros')}</div></button></li>`).join('')}</ul></div>`;
+  const sc=$('#d-body').scrollTop;$('#d-body').innerHTML=h;$('#d-body').scrollTop=keep?sc:0;
+  $('#drawer').hidden=false;$('#scrim').hidden=false;document.body.style.overflow='hidden';
+  if(!keep)$('#d-close').focus();
+}
+function closeDrawer(){if($('#drawer').hidden)return;$('#drawer').hidden=true;$('#scrim').hidden=true;document.body.style.overflow='';openCode=null;if(lastFocus&&document.body.contains(lastFocus))lastFocus.focus();}
+document.addEventListener('click',e=>{
+  const mk=e.target.closest('[data-mark]');if(mk){setMark(mk.dataset.mark,mk.dataset.v);return;}
+  const b=e.target.closest('[data-code]');
+  if(b&&D){const inD=b.closest('#drawer');openDrawer(b.dataset.code,inD?lastFocus:b);if(inD)$('#d-close').focus();}
+});
+$('#d-close').addEventListener('click',closeDrawer);$('#scrim').addEventListener('click',closeDrawer);
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closeDrawer();
+  if(e.key==='Tab'&&!$('#drawer').hidden){const f=[...$('#drawer').querySelectorAll('button')];if(!f.length)return;const a=f[0],z=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus();}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus();}}
+});
+
+/* ---------- rotas ---------- */
+const VIEWS=['resumo','matriz','historico','semestres'];
+function route(scroll){
+  if(!D)return;
+  const h=location.hash.slice(1),v=VIEWS.includes(h)?h:'resumo';
+  document.querySelectorAll('[data-view]').forEach(s=>{s.hidden=s.dataset.view!==v;});
+  document.querySelectorAll('.tabs a').forEach(a=>a.setAttribute('aria-current',a.getAttribute('href')==='#'+v?'page':'false'));
+  if(scroll){const top=$('.tabs').offsetTop;if(window.scrollY>top)window.scrollTo({top});}
+  closeDrawer();
+}
+window.addEventListener('hashchange',()=>route(true));
+
+/* ---------- envio do PDF ---------- */
+function status(kind,html){$('#up-status').innerHTML=kind?`<div class="status-box ${kind}">${kind==='load'?'<span class="spin"></span>':''}<div>${html}</div></div>`:'';}
+const PDFJS='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/';
+const errDet=e=>`<br><small style="opacity:.7">Detalhe técnico: ${esc((e&&(e.name||'Erro'))+': '+(e&&e.message||e))}</small>`;
+async function openPdf(bytes,useWorker){
+  const opts={data:bytes,isEvalSupported:false,disableFontFace:true,useSystemFonts:false,cMapUrl:PDFJS+'cmaps/',cMapPacked:true,standardFontDataUrl:PDFJS+'standard_fonts/'};
+  if(!useWorker)opts.worker=null;
+  const doc=await pdfjsLib.getDocument(opts).promise;
+  const raw=[];
+  for(let p=1;p<=doc.numPages;p++){const pg=await doc.getPage(p);const tc=await pg.getTextContent();tc.items.forEach(it=>{if(it.str&&it.str.trim())raw.push({p,x:it.transform[4],y:it.transform[5],s:it.str});});}
+  try{doc.destroy();}catch(e){}
+  return raw;
+}
+async function readPdf(file){
+  if(!file)return;
+  if(!window.pdfjsLib){status('err','<b>Não foi possível carregar o leitor de PDF.</b> Verifique sua conexão e recarregue a página.');return;}
+  status('load','Lendo o histórico…');
+  // 1. ler o arquivo
+  let buf;
+  try{buf=await file.arrayBuffer();}
+  catch(e){
+    try{buf=await new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>ko(r.error);r.readAsArrayBuffer(file);});}
+    catch(e2){status('err','<b>Não consegui ler o arquivo no seu celular.</b> Isso costuma acontecer quando o PDF é escolhido direto do Google Drive, WhatsApp ou outro app. Baixe o PDF para o aparelho (pasta Downloads ou Arquivos) e escolha de lá.'+errDet(e2));return;}
+  }
+  // 2. conferir se é PDF pelo conteúdo, não pelo nome
+  const u8=new Uint8Array(buf);
+  const head=new TextDecoder('latin1').decode(u8.subarray(0,Math.min(65536,u8.length)));
+  const at=head.indexOf('%PDF');
+  if(at<0){
+    const info=` <br><small style="opacity:.7">Arquivo recebido: “${esc(file.name||'sem nome')}”, ${(u8.length/1024).toFixed(1)} KB, tipo “${esc(file.type||'não informado')}”.</small>`;
+    const t=head.slice(0,400).replace(/^\uFEFF|^\s+/,'').toLowerCase();
+    let msg;
+    if(!u8.length)msg='<b>O arquivo chegou vazio.</b> Tente de novo escolhendo o PDF pela pasta Downloads ou Arquivos do aparelho. Se você abriu o site por um link dentro do WhatsApp ou Instagram, abra no Chrome ou no Safari: o navegador desses apps às vezes entrega o arquivo vazio.';
+    else if(t.startsWith('<')||t.indexOf('<html')>=0||t.indexOf('<!doctype')>=0)msg='<b>Esse arquivo é uma página da web salva, não um PDF.</b> No celular, abra o histórico no portal, use o menu do navegador e escolha <b>Compartilhar → Imprimir</b> (Android) ou <b>Compartilhar → Imprimir → Salvar em Arquivos</b> (iPhone), e salve como PDF.';
+    else if(u8[0]===0x89&&u8[1]===0x50)msg='<b>Esse arquivo é uma imagem PNG (print de tela), não um PDF.</b> Gere o PDF pelo botão “Imprimir” do histórico e escolha “Salvar como PDF”.';
+    else if(u8[0]===0xFF&&u8[1]===0xD8)msg='<b>Esse arquivo é uma foto (JPG), não um PDF.</b> Gere o PDF pelo botão “Imprimir” do histórico e escolha “Salvar como PDF”.';
+    else msg='<b>Esse arquivo não é um PDF.</b> Gere o PDF pelo botão “Imprimir” do histórico e escolha “Salvar como PDF”.';
+    status('err',msg+info);return;
+  }
+  if(at>0)buf=buf.slice(at);
+  // 3. extrair o texto (com e sem worker)
+  let raw;
+  try{
+    pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS+'legacy/build/pdf.worker.min.js';
+    try{raw=await openPdf(new Uint8Array(buf.slice(0)),true);}
+    catch(e){if(e&&e.name==='PasswordException')throw e;raw=await openPdf(new Uint8Array(buf.slice(0)),false);}
+  }catch(e){
+    const msg=e&&e.name==='PasswordException'?'<b>Esse PDF está protegido por senha.</b> Gere o histórico de novo pelo portal, sem senha.':e&&e.name==='InvalidPDFException'?'<b>Esse PDF parece estar corrompido ou incompleto.</b> Gere de novo pelo portal e tente outra vez.':'<b>Não consegui abrir esse PDF neste navegador.</b> Atualize o navegador ou tente pelo Chrome ou Safari, fora de apps como Instagram ou WhatsApp.';
+    status('err',msg+errDet(e));return;
+  }
+  if(raw.length<20){status('err','<b>Não encontrei texto nesse PDF.</b> Parece ser uma imagem ou foto do histórico. Gere o PDF direto do Portal do Aluno, pelo botão “Imprimir” e “Salvar como PDF”.');return;}
+  // 4. interpretar o histórico
+  let data;
+  try{data=HistParser.parse(raw);}catch(e){status('err','<b>Esse PDF não parece ser o Histórico Escolar do Portal do Aluno da UTFPR.</b> Abra o histórico no portal, clique em “Imprimir” e salve como PDF.'+(e&&e.message!=='formato'?errDet(e):''));return;}
+  if(!data.recs.length&&!Object.keys(data.matriz).length){status('err','<b>Li o PDF, mas não encontrei disciplinas.</b> Se você gerou o PDF pelo celular, tente gerar pelo computador: o portal muda o layout no celular. Confira também se o arquivo tem todas as páginas.');return;}
+  // 5. montar a análise
+  try{status('',null);location.hash='resumo';load(data,false);}
+  catch(e){goUpload();status('err','<b>Li o histórico, mas algo falhou ao montar a análise.</b> Me envie essa mensagem para eu corrigir.'+errDet(e));}
+}
+$('#file').addEventListener('change',async e=>{const inp=e.target;const f=inp.files&&inp.files[0];try{await readPdf(f);}finally{try{inp.value='';}catch(_){}}});
+const drop=$('#drop');
+['dragenter','dragover'].forEach(t=>document.addEventListener(t,e=>{if(e.dataTransfer&&[...e.dataTransfer.types].includes('Files')){e.preventDefault();drop.classList.add('over');}}));
+['dragleave','drop'].forEach(t=>document.addEventListener(t,e=>{if(t==='dragleave'&&e.relatedTarget)return;drop.classList.remove('over');}));
+document.addEventListener('drop',e=>{if(!e.dataTransfer||!e.dataTransfer.files.length)return;e.preventDefault();if($('#app').hidden)readPdf(e.dataTransfer.files[0]);else{goUpload();readPdf(e.dataTransfer.files[0]);}});
+function goUpload(){D=null;closeDrawer();$('#app').hidden=true;$('#upload').hidden=false;history.replaceState(null,'','#');window.scrollTo(0,0);}
+$('#btn-new').addEventListener('click',goUpload);
+$('#ex-leave').addEventListener('click',goUpload);
+$('#btn-ex').addEventListener('click',()=>{location.hash='resumo';load(window.EXAMPLE(),true);});
 })();
+
 </script>
-<footer class="sitefoot"><div class="wrap"><span>Ferramenta independente feita por estudantes, sem vínculo oficial com a UTFPR. Confira sempre no Portal do Aluno.</span><span>Seus arquivos são lidos no seu navegador e não são enviados a servidor.</span></div></footer>
+
 </body>
 </html>
