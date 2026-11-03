@@ -578,38 +578,115 @@ function model(){
 /* ---------- previsão de formatura ---------- */
 const termAdd=(a,s,n)=>{let i=a*2+(s-1)+n;return {a:Math.floor(i/2),s:i%2+1};};
 const termLbl=t=>t.a+'/'+t.s;
+const tIdx=t=>t.a*2+(t.s-1);
+const tOf=i=>({a:Math.floor(i/2),s:i%2+1});
+/* dados externos: turmas abertas (oferta) e pré-requisitos da matriz */
+let EXTRA={turmas:null,mat:null,ready:false};
+async function loadExtra(){
+  const get=u=>fetch(u,{cache:'no-cache'}).then(r=>r.ok?r.json():null).catch(()=>null);
+  const cod=String(D.info.matrizCod||'').replace(/\D/g,'');
+  const [t,m]=await Promise.all([get('/grade/turmas-curitiba.json'),cod?get('/grade/matrizes/'+cod+'.json'):Promise.resolve(null)]);
+  EXTRA={turmas:t&&t.disc?t:null,mat:m&&m.pre?m:null,ready:true};
+}
+/* prazo máximo de integralização, RODP (Res. COGEP 81/2019), art. 51 §1º */
+function prazoMax(nPer){if(nPer>=9)return {n:18,ok:true};if(nPer===8)return {n:15,ok:true};if(nPer===7)return {n:14,ok:true};if(nPer===6)return {n:12,ok:true};return {n:nPer*2,ok:false};}
+const aulasOf=x=>x.chs!=null&&x.chs>0?x.chs:(x.ch?Math.round(x.ch/15):0);
 function forecast(M){
-  // carga em sala que falta: obrigatórias com carga conhecida + optativas
-  const cls=M.pend.filter(m=>m.ch!=null);
-  const acts=M.pend.filter(m=>m.ch==null);
-  const optRem=M.conj.reduce((t,c)=>t+Math.max(0,c.cho-c.done),0)||(!M.conj.length&&D.resumo&&D.resumo.opt?Math.max(0,D.resumo.opt[0]-D.resumo.opt[2]):0);
-  const obrCls=cls.reduce((t,m)=>t+m.ch,0);
-  const remaining=obrCls+optRem;
-  // o que já está encaminhado: cursando, exames marcados e optativas em curso/exame
-  let covered=0;
-  cls.forEach(m=>{const s=M.st[m.c].state;if(s==='cur'||s==='exam'||s==='wait')covered+=m.ch;});
-  M.conj.forEach(c=>{covered+=c.curCH+(c.mark?c.rem:0);});
-  const after=Math.max(0,remaining-covered);
-  const actsOpen=acts.filter(m=>M.st[m.c].state==='pend'||M.st[m.c].state==='fail');
-  const extOpen=M.extC&&M.extC.rem>0&&!M.extC.mark;
-  // ritmo: horas aprovadas por semestre nos últimos semestres cursados
-  const cur=D.matTerm||(()=>{const k=D.recs.filter(r=>r.a).map(r=>r.a*10+r.s).sort().pop();return k?{a:Math.floor(k/10),s:k%10}:{a:new Date().getFullYear(),s:new Date().getMonth()<6?1:2};})();
-  const curK=cur.a*10+cur.s;
-  const by={};D.recs.forEach(r=>{if(!r.a||r.st==='aproveitada')return;const k=r.a*10+r.s;if(k>=curK)return;(by[k]=by[k]||{ap:0,n:0});by[k].n++;if(r.st==='aprovada'||r.st==='suficiencia')by[k].ap+=(r.ch||0);});
-  const last=Object.keys(by).map(Number).sort((a,b)=>b-a).slice(0,4);
-  const pace=last.length?Math.max(30,last.reduce((t,k)=>t+by[k].ap,0)/last.length):null;
-  const nPer=Math.max(...MAT().map(m=>m.p||0),1);
-  const matrixPace=Math.round(M.total/nPer);
-  const scen=[];
-  const fin=n=>termAdd(cur.a,cur.s,Math.max(0,n-1));
-  // 1) com o que já está encaminhado
-  if(after===0)scen.push({k:'best',t:fin(1),l:'Se você for aprovado no que está cursando e nos exames marcados',d:'Toda a carga de disciplinas fica completa neste semestre.'});
-  else scen.push({k:'best',t:fin(1+Math.ceil(after/matrixPace)),l:'Aprovado no que está cursando, depois no ritmo da matriz',d:`Depois deste semestre ainda faltariam ${fh(after)} de disciplinas.`});
-  // 2) ritmo da matriz, sem contar o que está em curso
-  scen.push({k:'mat',t:fin(Math.max(1,Math.ceil(remaining/matrixPace))),l:`No ritmo da matriz (cerca de ${fh(matrixPace)} por semestre)`,d:`Faltam ${fh(remaining)} de disciplinas, contando o semestre atual.`});
-  // 3) ritmo da própria pessoa
-  if(pace)scen.push({k:'you',t:fin(Math.max(1,Math.ceil(remaining/pace))),l:`No seu ritmo dos últimos ${last.length} semestres (${fh(Math.round(pace))} aprovadas por semestre)`,d:`Média de horas aprovadas por semestre em ${last.sort((a,b)=>a-b).map(k=>Math.floor(k/10)+'/'+k%10).join(', ')}.`});
-  return {cur,remaining,covered,after,scen,actsOpen,extOpen,pace,matrixPace};
+  const mat=MAT();
+  const nPer=Math.max(1,...mat.map(m=>m.p||0));
+  // semestre de partida: o das matrículas do histórico; sem matrícula, o semestre atual do calendário
+  const now=new Date();const nowT={a:now.getFullYear(),s:now.getMonth()<6?1:2};
+  const lastK=Math.max(0,...D.recs.filter(r=>r.a).map(r=>r.a*10+r.s));
+  let cur=D.matTerm||nowT;
+  if(!D.matTerm&&lastK>=nowT.a*10+nowT.s)cur=termAdd(Math.floor(lastK/10),lastK%10,1);
+  const curI=tIdx(cur);
+  // início do curso e prazo máximo
+  const ig=(D.info.ingresso||'').match(/(\d)\s*\/\s*(\d{4})/);
+  const ing=ig?{a:+ig[2],s:+ig[1]}:null;
+  const pz=prazoMax(nPer);
+  const trI=new Set((D.bloq||[]).filter(b=>b.a&&b.s&&/tranc/i.test(b.tipo+' '+b.desc)).map(b=>b.a*2+(b.s-1)));
+  const tr=ing?[...trI].filter(i=>i>=tIdx(ing)&&i<=curI).length:0;
+  const deadline=ing?termAdd(ing.a,ing.s,pz.n-1+tr):null;
+  const used=ing?curI-tIdx(ing)+1-tr:null;
+  // ritmo: aulas semanais aprovadas em cada semestre anterior (sem créditos aproveitados e sem exames)
+  const by={};
+  D.recs.forEach(r=>{if(!r.a||!r.s||r.st==='aproveitada'||r.k==='exa'||r.k==='xt')return;const i=tIdx(r);if(i>=curI)return;
+    const o=by[i]||(by[i]={ap:0,en:0});const a=aulasOf(r);if(r.st!=='cancelada')o.en+=a;if(DONE.has(r.st))o.ap+=a;});
+  const terms=Object.keys(by).map(Number).sort((a,b)=>a-b);
+  const avg=ks=>ks.length?ks.reduce((t,k)=>t+by[k].ap,0)/ks.length:null;
+  const paceAll=avg(terms),recent=terms.slice(-4),paceRec=avg(recent);
+  const enAll=terms.length?terms.reduce((t,k)=>t+by[k].en,0)/terms.length:null;
+  // oferta de turmas
+  const TJ=EXTRA.turmas;
+  const has=c=>!!(TJ&&TJ.disc[c]&&Object.keys(TJ.disc[c].t||{}).length);
+  const eqs={};const addEq=(x,y)=>{(eqs[x]=eqs[x]||new Set()).add(y);};
+  D.recs.forEach(r=>{if(r.map)addEq(r.map,r.c);});
+  if(EXTRA.mat&&EXTRA.mat.eq)Object.entries(EXTRA.mat.eq).forEach(([x,ys])=>ys.forEach(y=>addEq(x,y)));
+  const offNow=c=>has(c)||[...(eqs[c]||[])].some(has);
+  let offer={mode:'none'};
+  if(TJ){const T0={a:TJ.ano,s:TJ.periodo};const off=mat.filter(m=>m.p&&offNow(m.c));const par=new Set(off.map(m=>m.p%2));
+    if(off.length>=3)offer={mode:par.size>=2?'sem':'anual',T0,i0:tIdx(T0),par0:[...par][0],n:off.length,tot:mat.filter(m=>m.p).length};
+    else offer={mode:'nomatch',T0};}
+  const offered=(m,i)=>{
+    if(offer.mode!=='sem'&&offer.mode!=='anual')return true;
+    const same=(i%2)===(offer.i0%2),now=offNow(m.c);
+    if(offer.mode==='sem')return now||!same;      // aberta agora: todo semestre; não aberta: no semestre seguinte em diante, alternando
+    const pp=m.p?m.p%2:null;
+    if(pp==null)return now?same:!same;
+    return pp===offer.par0?same:!same;             // oferta anual: segue a paridade do período na matriz
+  };
+  // pré-requisitos
+  const PRE=EXTRA.mat?EXTRA.mat.pre:null;
+  const preOf=c=>(PRE&&PRE[c])||[];
+  const nPre=PRE?Object.values(PRE).filter(v=>v&&v.length).length:0;
+  // atividades sem turma (estágio, atividades complementares): correm em paralelo
+  const isAct=m=>m.chs===0||/est[áa]gio|atividades\s+(integradoras|complementa)/i.test(m.n||'')||(m.chs==null&&(m.ch==null||m.ch>=120)&&!offNow(m.c));
+  // carga cheia da matriz, em aulas semanais por semestre
+  const optTot=M.conj.reduce((t,c)=>t+c.cho,0)||(D.resumo&&D.resumo.opt?D.resumo.opt[0]:0);
+  const matCap=Math.round((mat.filter(m=>!isAct(m)).reduce((t,m)=>t+aulasOf(m),0)+optTot/15)/nPer);
+  // ponto de partida: aprovação em tudo que está cursando e no que foi marcado como exame ou aguardando registro
+  const baseDone=new Set();
+  mat.forEach(m=>{const s=M.st[m.c].state;if(s==='done'||s==='cur'||s==='exam'||s==='wait')baseDone.add(m.c);});
+  D.recs.forEach(r=>{if(DONE.has(r.st)){baseDone.add(r.c);if(r.map)baseDone.add(r.map);}});
+  const pendAll=mat.filter(m=>!baseDone.has(m.c));
+  const acts=pendAll.filter(isAct);
+  const optUnits=()=>{const out=[];
+    M.conj.forEach(c=>{const rem=c.mark?0:c.rem;if(rem<=0)return;
+      const gr=D.recs.filter(r=>r.g===c.id&&r.ch);const tch=gr.length?Math.max(15,Math.round(gr.reduce((t,r)=>t+r.ch,0)/gr.length/15)*15):60;
+      let left=rem;while(left>0){const h=Math.min(tch,left);out.push({c:'OPT',n:'Optativa · '+c.nome,a:Math.max(1,Math.round(h/15)),h,opt:true});left-=h;}});
+    if(!M.conj.length&&D.resumo&&D.resumo.opt){let left=Math.max(0,D.resumo.opt[0]-D.resumo.opt[2]);while(left>0){const h=Math.min(60,left);out.push({c:'OPT',n:'Optativa',a:Math.round(h/15),h,opt:true});left-=h;}}
+    return out;};
+  function sim(cap){
+    const done=new Set(baseDone);
+    let todo=pendAll.filter(m=>!isAct(m)).map(m=>({c:m.c,n:m.n,p:m.p||99,a:aulasOf(m)||4,fails:M.st[m.c].fails,m}));
+    const opt=optUnits();
+    const plan=[];let i=curI+1,guard=0;
+    while((todo.length||opt.length)&&guard<30){guard++;
+      const el=todo.filter(x=>offered(x.m,i)&&preOf(x.c).every(p=>done.has(p))).sort((x,y)=>x.p-y.p||y.fails-x.fails||y.a-x.a);
+      const pick=[];let load=0;
+      for(const x of el){if(load+x.a<=cap||!pick.length){pick.push(x);load+=x.a;}}
+      while(opt.length&&(load+opt[0].a<=cap||!pick.length)){const o=opt.shift();pick.push(o);load+=o.a;}
+      const wait=todo.filter(x=>!pick.includes(x)&&!offered(x.m,i)).map(x=>x.c);
+      const waitPre=todo.filter(x=>!pick.includes(x)&&offered(x.m,i)&&!preOf(x.c).every(p=>done.has(p))).map(x=>x.c);
+      pick.forEach(x=>{if(!x.opt)done.add(x.c);});
+      todo=todo.filter(x=>!pick.includes(x));
+      plan.push({t:tOf(i),items:pick,load,wait,waitPre});
+      i++;
+    }
+    while(plan.length&&!plan[plan.length-1].items.length)plan.pop();
+    return {t:plan.length?plan[plan.length-1].t:cur,plan,stuck:todo.length>0};
+  }
+  const scen=[];const seen=new Set();
+  const add=(k,cap,l,d)=>{cap=Math.max(4,Math.round(cap));if(seen.has(cap))return;seen.add(cap);const r=sim(cap);scen.push(Object.assign({k,cap,l,d},r));};
+  const fmtT=ks=>ks.map(k=>termLbl(tOf(k))).join(', ');
+  if(paceAll!=null)add('you',paceAll,'No seu ritmo',`Média de ${Math.round(paceAll)} aulas semanais aprovadas por semestre em ${plural(terms.length,'semestre cursado','semestres cursados')} (${fmtT(terms)}).`);
+  if(paceRec!=null&&terms.length>4)add('rec',paceRec,'No seu ritmo recente',`Média dos últimos 4 semestres (${fmtT(recent)}): ${Math.round(paceRec)} aulas semanais aprovadas.`);
+  add('mat',matCap,'Com a carga cheia da matriz',`Cerca de ${matCap} aulas semanais por semestre, a média da matriz.`);
+  const remaining=pendAll.filter(m=>!isAct(m)).length+optUnits().length;
+  const stat=t=>{if(!deadline)return null;const d=tIdx(deadline)-tIdx(t);
+    return d>0?{k:'ok',l:'Dentro do prazo',d:`Sobra${d>1?'m':''} ${plural(d,'semestre','semestres')} até o prazo máximo.`}:d===0?{k:'warn',l:'No limite do prazo',d:'Termina no último semestre permitido: uma reprovação já passa do prazo.'}:{k:'bad',l:'Além do prazo',d:`Passa ${plural(-d,'semestre','semestres')} do prazo máximo. Converse com a coordenação sobre dilação de prazo.`};};
+  scen.forEach(s=>s.st=stat(s.t));const nowSt=stat(cur);
+  return {cur,curI,ing,deadline,pz,nPer,used,tr,scen,nowSt,acts,extOpen:M.extC&&M.extC.rem>0&&!M.extC.mark,remaining,offer,nPre,hasMat:!!EXTRA.mat,ready:EXTRA.ready,enAll,terms,by};
 }
 
 /* ---------- carregar ---------- */
@@ -620,6 +697,7 @@ function load(data,example){
   $('#upload').hidden=true;$('#app').hidden=false;$('#ex-banner').hidden=!IS_EX;
   if(!IS_EX)saveForGrade();
   renderHero();renderAll();renderHist(true);renderSem();
+  loadExtra().then(()=>{if(D!==data)return;renderAll();if(!IS_EX)saveForGrade();});
   if(!location.hash||location.hash==='#')history.replaceState(null,'','#resumo');
   route(false);window.scrollTo(0,0);
 }
@@ -716,14 +794,35 @@ function renderAll(){
   // coluna lateral
   const side=[];
   {const F=M.prev;const main=F.scen[0];const others=F.scen.slice(1);
-   const pend=[...F.actsOpen.map(m=>m.n),F.extOpen?'horas de extensão':''].filter(Boolean);
+   const pend=[...F.acts.filter(m=>M.st[m.c].state==='pend'||M.st[m.c].state==='fail').map(m=>m.n),F.extOpen?'horas de extensão':''].filter(Boolean);
    const allDoneNow=F.remaining===0;
-   side.push(`<section class="card alert" aria-labelledby="h-prev"><div class="row"><span class="tag ok">Previsão</span></div>
+   const tag=s=>s?`<span class="tag ${s.k}">${esc(s.l)}</span>`:'';
+   const prazo=F.deadline?`<div class="pz"><div><span>Início</span><b class="mono">${termLbl(F.ing)}</b></div><div><span>Agora</span><b class="mono">${termLbl(F.cur)}</b><small>${F.used}º de ${F.pz.n} semestres</small></div><div><span>Prazo máximo</span><b class="mono">${termLbl(F.deadline)}</b></div></div>`:'';
+   const offTxt=F.offer.mode==='sem'?`Oferta: turmas abertas em ${termLbl(F.offer.T0)} (${F.offer.n} disciplinas da sua matriz). O curso abriu disciplinas de períodos pares e ímpares no mesmo semestre, então cada disciplina aberta agora conta como ofertada todo semestre; as que não abriram entram a partir do semestre seguinte.`
+     :F.offer.mode==='anual'?`Oferta: turmas abertas em ${termLbl(F.offer.T0)}. O curso só abriu disciplinas de períodos ${F.offer.par0?'ímpares':'pares'} nesse semestre, então cada disciplina conta como ofertada uma vez por ano, no semestre da paridade do seu período.`
+     :F.offer.mode==='nomatch'?`Oferta: a lista de turmas de ${termLbl(F.offer.T0)} não traz disciplinas desta matriz, então a oferta foi considerada todo semestre.`
+     :F.ready?'Oferta: lista de turmas indisponível, então a oferta foi considerada todo semestre.':'Carregando a lista de turmas abertas…';
+   const preTxt=F.hasMat?(F.nPre?`Pré-requisitos: ${plural(F.nPre,'disciplina tem','disciplinas têm')} pré-requisito na Matriz ${esc(D.info.matrizCod)}; elas só entram depois dos pré-requisitos.`:`Pré-requisitos: a Matriz ${esc(D.info.matrizCod)} não tem pré-requisitos cadastrados no Portal.`)
+     :F.ready?`Pré-requisitos: ainda não temos os pré-requisitos da Matriz ${esc(D.info.matrizCod||'')}, então não foram considerados.`:'';
+   const planHtml=s=>s.plan.length?`<ol class="plan">${s.plan.map(p=>`<li><div class="ph"><b class="mono">${termLbl(p.t)}</b><span>${p.items.length?p.load+' aulas/sem.':'nada disponível'}</span></div>${p.items.length?`<ul>${p.items.map(x=>`<li>${x.opt?'':`<span class="mono">${esc(x.c)}</span> `}${esc(x.n)}<span class="au">${x.a} aulas</span></li>`).join('')}</ul>`:''}${p.wait.length?`<p class="pw">Sem oferta prevista: ${esc(p.wait.join(', '))}</p>`:''}${p.waitPre.length?`<p class="pw">Esperando pré-requisito: ${esc(p.waitPre.join(', '))}</p>`:''}</li>`).join('')}</ol>`:'';
+   side.push(`<section class="card alert" aria-labelledby="h-prev"><div class="row"><span class="tag ok">Previsão</span>${tag(allDoneNow?F.nowSt:main.st)}</div>
      <h3 id="h-prev">Previsão de formatura</h3>
-     ${allDoneNow?`<p><b>Todas as disciplinas já estão concluídas.</b></p>`:`<div class="headline" style="margin-top:2px"><span class="big" style="font-size:44px">${termLbl(main.t)}</span><span class="of">fim do semestre</span></div><p>${esc(main.l)}. ${esc(main.d)}</p>`}
-     ${others.length&&!allDoneNow?`<ul class="mini-list">${others.map(o=>`<li><button type="button" tabindex="-1" style="cursor:default"><span class="n">${esc(o.l)}</span><b class="mono">${termLbl(o.t)}</b></button></li>`).join('')}</ul>`:''}
+     <p style="font-size:12.5px">Calculada agora a partir deste histórico${D.info.emitido?' (emitido em '+esc(D.info.emitido)+')':''}, considerando aprovação em ${D.matTerm?'tudo que você cursa em '+termLbl(F.cur):'tudo que está em curso'} e no que você marcou como exame ou aguardando registro.</p>
+     ${allDoneNow?`<div class="headline" style="margin-top:2px"><span class="big" style="font-size:44px">${termLbl(F.cur)}</span><span class="of">fim do semestre</span></div><p><b>Nenhuma disciplina fica para depois deste semestre.</b></p>`
+       :`<div class="headline" style="margin-top:2px"><span class="big" style="font-size:44px">${termLbl(main.t)}</span><span class="of">fim do semestre</span></div><p><b>${esc(main.l)}</b>, com até ${main.cap} aulas semanais por semestre. ${esc(main.d)}${main.st?' '+esc(main.st.d):''}</p>`}
+     ${prazo}
+     ${others.length&&!allDoneNow?`<ul class="mini-list">${others.map(o=>`<li><button type="button" tabindex="-1" style="cursor:default"><span class="n">${esc(o.l)} (até ${o.cap} aulas)</span><b class="mono">${termLbl(o.t)}</b></button></li>`).join('')}</ul>`:''}
+     ${main.stuck?'<p>Algumas disciplinas não couberam no plano por falta de oferta ou pré-requisito; confira com a coordenação.</p>':''}
      ${pend.length?`<p>Também precisa estar registrado: ${esc(pend.join(', '))}. Atividades sem turma podem ser feitas em paralelo às disciplinas.</p>`:''}
-     <p style="font-size:12.5px">A previsão é uma estimativa: não considera pré-requisitos, oferta de turmas nem o prazo máximo do curso. A colação acontece depois do fim do semestre, no calendário da UTFPR.</p>
+     ${!allDoneNow&&main.plan.length?`<details class="more"><summary>Ver o plano semestre a semestre</summary>${planHtml(main)}</details>`:''}
+     <details class="more"><summary>Como a previsão é calculada</summary><ul class="assume">
+       <li>Ritmo: média de aulas semanais aprovadas por semestre nos semestres anteriores, sem créditos aproveitados nem exames de suficiência.${F.enAll!=null?` Você se matriculou em média em ${Math.round(F.enAll)} aulas semanais por semestre.`:''}</li>
+       <li>Ordem: primeiro as obrigatórias de períodos mais antigos e as com reprovação; as optativas preenchem o espaço que sobra.</li>
+       <li>${esc(offTxt)}</li>${preTxt?`<li>${esc(preTxt)}</li>`:''}
+       <li>Prazo máximo: ${F.pz.ok?`${F.pz.n} semestres para cursos de ${F.nPer} semestres, contados do ingresso e sem contar trancamentos (Regulamento da Organização Didático-Pedagógica, Res. COGEP 81/2019, art. 51)`:`estimado em ${F.pz.n} semestres (o dobro da duração do curso); confirme no regulamento`}.${F.tr?` ${plural(F.tr,'trancamento encontrado','trancamentos encontrados')} nos bloqueios.`:''}</li>
+       <li>Choque de horário não entra na conta: use Montar grade para escolher as turmas.</li>
+     </ul></details>
+     <p style="font-size:12.5px">É uma estimativa. A colação acontece depois do fim do semestre, no calendário da UTFPR.</p>
    </section>`);}
   if(D.chsFaltTotal!=null){
     const tot=D.chsFaltTotal,lim=D.limite||16;
