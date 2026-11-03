@@ -1255,8 +1255,21 @@ async function readPdf(file){
     catch(e2){status('err','<b>Não consegui ler o arquivo no seu celular.</b> Isso costuma acontecer quando o PDF é escolhido direto do Google Drive, WhatsApp ou outro app. Baixe o PDF para o aparelho (pasta Downloads ou Arquivos) e escolha de lá.'+errDet(e2));return;}
   }
   // 2. conferir se é PDF pelo conteúdo, não pelo nome
-  const head=new TextDecoder('latin1').decode(new Uint8Array(buf,0,Math.min(1024,buf.byteLength)));
-  if(head.indexOf('%PDF')<0){status('err','<b>Esse arquivo não é um PDF.</b> Gere o PDF pelo botão “Imprimir” do histórico e escolha “Salvar como PDF”.');return;}
+  const u8=new Uint8Array(buf);
+  const head=new TextDecoder('latin1').decode(u8.subarray(0,Math.min(65536,u8.length)));
+  const at=head.indexOf('%PDF');
+  if(at<0){
+    const info=` <br><small style="opacity:.7">Arquivo recebido: “${esc(file.name||'sem nome')}”, ${(u8.length/1024).toFixed(1)} KB, tipo “${esc(file.type||'não informado')}”.</small>`;
+    const t=head.slice(0,400).replace(/^\uFEFF|^\s+/,'').toLowerCase();
+    let msg;
+    if(!u8.length)msg='<b>O arquivo chegou vazio.</b> Isso acontece no celular quando o PDF é escolhido direto do Google Drive, WhatsApp ou de outro app. Baixe o PDF para o aparelho (pasta Downloads ou Arquivos) e escolha de lá.';
+    else if(t.startsWith('<')||t.indexOf('<html')>=0||t.indexOf('<!doctype')>=0)msg='<b>Esse arquivo é uma página da web salva, não um PDF.</b> No celular, abra o histórico no portal, use o menu do navegador e escolha <b>Compartilhar → Imprimir</b> (Android) ou <b>Compartilhar → Imprimir → Salvar em Arquivos</b> (iPhone), e salve como PDF.';
+    else if(u8[0]===0x89&&u8[1]===0x50)msg='<b>Esse arquivo é uma imagem PNG (print de tela), não um PDF.</b> Gere o PDF pelo botão “Imprimir” do histórico e escolha “Salvar como PDF”.';
+    else if(u8[0]===0xFF&&u8[1]===0xD8)msg='<b>Esse arquivo é uma foto (JPG), não um PDF.</b> Gere o PDF pelo botão “Imprimir” do histórico e escolha “Salvar como PDF”.';
+    else msg='<b>Esse arquivo não é um PDF.</b> Gere o PDF pelo botão “Imprimir” do histórico e escolha “Salvar como PDF”.';
+    status('err',msg+info);return;
+  }
+  if(at>0)buf=buf.slice(at);
   // 3. extrair o texto (com e sem worker)
   let raw;
   try{
