@@ -19,36 +19,260 @@
 </div></nav>
 <style>
 .g-hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
-.g-hero .wrap{padding-block:48px 40px;position:relative}
-.g-hero h1{font-family:var(--f-disp);font-style:italic;font-weight:800;text-transform:uppercase;font-size:clamp(36px,7vw,84px);letter-spacing:-.03em;line-height:.92;margin-top:16px}
+.g-hero .wrap{padding-block:40px 30px;position:relative}
+.g-hero h1{font-family:var(--f-disp);font-style:italic;font-weight:800;text-transform:uppercase;font-size:clamp(34px,6.4vw,76px);letter-spacing:-.03em;line-height:.92;margin-top:14px}
 .g-hero h1 .sl{color:var(--yellow)}
-.g-hero .lead{color:var(--muted);max-width:60ch;margin-top:18px;font-size:16px}
-.g-hero .asterisk{color:var(--yellow);right:-60px;top:-50px;width:240px;height:240px}
-.soon{margin-top:24px;border:1px solid var(--yellow);background:var(--warn-bg);border-radius:6px;padding:16px;font-size:14.5px;max-width:70ch}
-.soon b{color:var(--yellow)}
-.mine{margin-top:28px}
-.mine h2{font-family:var(--f-disp);font-weight:700;font-size:18px;margin-bottom:10px}
-.mine ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:8px}
-.mine li{border:1px dashed #4A4A4A;border-radius:6px;padding:10px 12px;font-size:14px}
-.mine li span{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.g-hero .lead{color:var(--muted);max-width:62ch;margin-top:14px;font-size:15.5px}
+.g-hero .asterisk{color:var(--yellow);right:-60px;top:-50px;width:220px;height:220px}
+.g-src{margin-top:16px;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
+.g-src b{color:var(--ink)}
+.g-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:20px}
+.g-bar label.lbl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.g-bar select{min-width:min(100%,280px)}
+.gmain{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:20px;align-items:start;padding-block:24px 64px}
+.gcol{min-width:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.panel-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.panel-h h2{font-family:var(--f-disp);font-weight:700;font-size:16px}
+.list{max-height:none}
+.grp{padding:6px 0}
+.grp>h3{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:12px 16px 6px;display:flex;justify-content:space-between;gap:8px}
+.grp>h3 span{font-family:var(--f-mono);letter-spacing:0}
+.disc{border-top:1px solid var(--line)}
+.disc>button.dh2{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;text-align:left;background:none;border:0;padding:11px 16px;cursor:pointer;color:var(--ink)}
+.disc>button.dh2:hover{background:#191919}
+.disc .nm{font-weight:600;font-size:14.5px;min-width:0}
+.disc .sub{grid-column:1;font-size:12px;color:var(--muted)}
+.disc .sub .mono{font-size:11.5px}
+.disc .rt2{grid-row:1/span 2;grid-column:2;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.flag{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 7px;border-radius:4px;white-space:nowrap}
+.flag.need{background:var(--pink);color:var(--on)} .flag.cur{background:var(--yellow);color:var(--on)} .flag.opt{background:var(--blue);color:#fff} .flag.ok{background:#2C2C2C;color:var(--muted)} .flag.sel{background:var(--lime);color:var(--on)}
+.turmas{display:flex;flex-direction:column;gap:6px;padding:0 16px 14px}
+.tm{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:9px 10px;background:var(--bg)}
+.tm.on{border-color:var(--lime);background:var(--accent-soft)}
+.tm.clash{border-color:var(--pink)}
+.tm .code{font-family:var(--f-mono);font-weight:700;font-size:13px}
+.tm .who{font-size:13px;min-width:0}
+.tm .when{grid-column:2;font-size:12px;color:var(--muted);font-family:var(--f-mono)}
+.tm .vag{grid-column:2;font-size:11.5px;color:var(--muted)}
+.tm .add{grid-row:1/span 3;grid-column:3;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:8px 12px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+.tm .add:hover{border-color:var(--lime)}
+.tm.on .add{background:var(--lime);color:var(--on);border-color:var(--lime)}
+.tm .warn{grid-column:2;font-size:12px;color:var(--bad);font-weight:600}
+.more{padding:10px 16px 16px;color:var(--muted);font-size:13px}
+.gridwrap{overflow-x:auto}
+table.week{border-collapse:separate;border-spacing:3px;width:100%;min-width:640px;table-layout:fixed}
+table.week th{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 2px}
+table.week th.slot{width:62px;text-align:left;font-family:var(--f-mono);letter-spacing:0;font-size:11px}
+table.week th.slot small{display:block;color:#5d5d5d;font-size:9.5px}
+table.week td{height:38px;border-radius:4px;background:var(--sunk);vertical-align:top;padding:0;position:relative}
+table.week tr.gap td,table.week tr.gap th{height:6px;background:none;padding:0}
+.cell{height:100%;border-radius:4px;padding:3px 5px;font-size:10.5px;line-height:1.2;overflow:hidden;color:var(--on);font-weight:700;cursor:pointer}
+.cell small{display:block;font-weight:500;opacity:.85;font-family:var(--f-mono);font-size:9.5px}
+.cell.clash{background:repeating-linear-gradient(135deg,var(--pink) 0 6px,#b0238a 6px 12px)!important;color:var(--on)}
+.cell.prev{outline:2px dashed var(--ink);outline-offset:-2px;background:rgba(245,245,245,.12)!important;color:var(--ink)}
+.sumbar{display:flex;flex-wrap:wrap;gap:8px 18px;padding:14px 16px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
+.sumbar b{color:var(--ink);font-family:var(--f-disp);font-size:18px;margin-right:4px}
+.sumbar .bad b{color:var(--pink)}
+.chosen{list-style:none;margin:0;padding:0 16px 16px;display:flex;flex-direction:column;gap:6px}
+.chosen li{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13.5px}
+.chosen .sw2{width:12px;height:12px;border-radius:3px}
+.chosen .x{background:none;border:1px solid var(--line);color:var(--muted);border-radius:4px;font-size:12px;padding:3px 8px;cursor:pointer}
+.chosen .x:hover{color:var(--ink);border-color:var(--ink)}
+.acts{display:flex;flex-wrap:wrap;gap:8px;padding:0 16px 16px}
+.nodata{padding:28px 16px;color:var(--muted);text-align:center}
+.legend2{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);padding:10px 16px 0}
+.legend2 span{display:inline-flex;align-items:center;gap:6px}
+@media (max-width:1000px){.gmain{grid-template-columns:minmax(0,1fr)}.gcol.right{order:-1}}
 </style>
+
 <header class="g-hero">
   <svg class="asterisk" viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor"><rect x="41" y="4" width="18" height="92" rx="9"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(60 50 50)"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(120 50 50)"/></g></svg>
   <div class="wrap">
     <p class="eyebrow"><b style="color:var(--yellow)">Grade</b> . UTFPR . Curitiba .</p>
     <h1><span class="sl">-</span>Montar grade<span class="sl">//</span></h1>
-    <p class="lead">Escolha as turmas abertas do semestre e veja a sua semana montada, com aviso de choque de horário. Se você já leu o seu histórico aqui, as disciplinas que faltam aparecem em destaque.</p>
-    <div class="soon"><b>Em construção.</b> Estamos conectando esta página às turmas abertas publicadas no Portal do Aluno. Enquanto isso, veja abaixo o que falta no seu último histórico.</div>
-    <div class="mine" id="mine"></div>
+    <p class="lead">Escolha as turmas abertas e veja a sua semana montada na hora, com aviso de choque de horário. Se você leu seu histórico aqui, as disciplinas que faltam aparecem primeiro.</p>
+    <div class="g-src" id="src"></div>
+    <div class="g-bar">
+      <label class="lbl" for="curso">Curso</label>
+      <select id="curso"></select>
+      <label class="search" style="flex:1 1 260px">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <input id="q" type="search" placeholder="Buscar disciplina, código ou professor(a) em todos os cursos" autocomplete="off" aria-label="Buscar disciplina">
+      </label>
+    </div>
   </div>
 </header>
+
+<div class="wrap gmain">
+  <section class="gcol left panel" aria-labelledby="h-list">
+    <div class="panel-h"><h2 id="h-list">Turmas abertas</h2><span class="mono" style="font-size:12px;color:var(--muted)" id="list-count"></span></div>
+    <div class="list" id="list"><div class="nodata">Carregando turmas…</div></div>
+  </section>
+  <section class="gcol right" aria-labelledby="h-grade">
+    <div class="panel" style="position:sticky;top:12px">
+      <div class="panel-h"><h2 id="h-grade">Sua grade</h2><button class="btn ghost sm" type="button" id="clear">Limpar</button></div>
+      <div class="legend2"><span><i class="sw" style="background:var(--lime)"></i>Turmas escolhidas</span><span><i class="sw" style="background:var(--pink)"></i>Choque de horário</span><span><i class="sw" style="outline:2px dashed var(--ink);outline-offset:-2px"></i>Prévia</span></div>
+      <div class="gridwrap"><table class="week" id="week"></table></div>
+      <div class="sumbar" id="sum"></div>
+      <ul class="chosen" id="chosen"></ul>
+      <div class="acts"><button class="btn primary sm" type="button" id="copy">Copiar lista para a matrícula</button></div>
+      <p class="comp-note" style="padding:0 16px 16px">Confira tudo no Portal do Aluno antes de se matricular. Turmas, salas e professores podem mudar. <a class="lnk" href="/grade/atualizar/">Atualizar as turmas</a></p>
+    </div>
+  </section>
+</div>
+
+<script src="/assets/config.js"></script>
 <script>
-(function(){let h=null;try{h=JSON.parse(localStorage.getItem('sc-historico')||'null');}catch(e){}
-const el=document.getElementById('mine');
-if(!h){el.innerHTML='<p class="lead" style="margin-top:0">Leia o seu histórico na página <a class="lnk" href="/historico/">Histórico</a> para ver aqui as disciplinas que faltam.</p>';return;}
+(function(){
+const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const p=(h.pend||[]);
-el.innerHTML=`<h2>Obrigatórias que faltam no seu histórico (${p.length})</h2><ul>${p.map(x=>`<li><span>${esc(x.c)}${x.p?' · '+x.p+'º período':''}${x.st==='cur'?' · cursando':''}</span>${esc(x.n)}</li>`).join('')}</ul>`;})();
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+const store={get(k){try{return JSON.parse(localStorage.getItem(k)||'null');}catch(e){return null;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+const DIAS={2:'Seg',3:'Ter',4:'Qua',5:'Qui',6:'Sex',7:'Sáb'};
+const SLOTS=[['M',6],['T',6],['N',5]];
+/* horários das aulas no câmpus Curitiba */
+const HORA={M1:'07:30',M2:'08:20',M3:'09:10',M4:'10:20',M5:'11:10',M6:'12:00',T1:'13:00',T2:'13:50',T3:'14:40',T4:'15:50',T5:'16:40',T6:'17:30',N1:'18:40',N2:'19:30',N3:'20:20',N4:'21:20',N5:'22:10'};
+const PAL=['#C9F22C','#F8C02D','#7A80FF','#5FE0C1','#FF8A5B','#E7A3FF','#9BD3FF','#FFD6E0','#B7F28C','#FFC46B'];
+
+let DATA=null,H=null,SEL=[],PREV=null,KEY='';
+const turmaKey=(c,t)=>c+'|'+t;
+const parseH=h=>{const m=String(h).match(/^(\d)([MTN])(\d)(?:\((.*)\))?$/);return m?{d:+m[1],s:m[2]+m[3],sala:m[4]||''}:null;};
+const profOf=t=>t.prof||(t.raw?(t.raw.split('|')[2]||'').trim():'');
+function fmtWhen(hs){
+  const by={};hs.map(parseH).filter(Boolean).forEach(x=>{(by[x.d]=by[x.d]||[]).push(x);});
+  return Object.keys(by).sort().map(d=>{const a=by[d];const s=a.map(x=>x.s);const salas=[...new Set(a.map(x=>x.sala).filter(Boolean))];return `${DIAS[d]} ${s[0]}${s.length>1?'–'+s[s.length-1]:''}${salas.length?' ('+salas.join(', ')+')':''}`;}).join(' · ')||'Sem horário fixo';
+}
+
+async function load(){
+  const url=(window.SC_CONFIG||{}).turmasJson||'/grade/turmas-curitiba.json';
+  try{const r=await fetch(url,{cache:'no-cache'});if(!r.ok)throw new Error('HTTP '+r.status);DATA=await r.json();}
+  catch(e){$('#list').innerHTML=`<div class="nodata">Não consegui carregar as turmas abertas (${esc(e.message)}). Recarregue a página.</div>`;return;}
+  H=store.get('sc-historico');
+  KEY='sc-grade-'+DATA.ano+'-'+DATA.periodo;
+  SEL=(store.get(KEY)||[]).filter(k=>{const [c,t]=k.split('|');return DATA.disc[c]&&DATA.disc[c].t[t];});
+  const g=DATA.cursos.map(c=>c.gerado).filter(Boolean).sort()[0]||'';
+  $('#src').innerHTML=`<span>Fonte: <b>Portal do Aluno</b>, Relação de Turmas Abertas · ${DATA.periodo}º semestre de ${DATA.ano}</span>${g?`<span>Gerado em <b>${esc(g)}</b></span>`:''}<span>${Object.keys(DATA.disc).length.toLocaleString('pt-BR')} disciplinas · ${DATA.cursos.filter(c=>c.disc.length).length} cursos</span>`;
+  const cursos=DATA.cursos.filter(c=>c.disc.length).sort((a,b)=>a.nome.localeCompare(b.nome,'pt'));
+  $('#curso').innerHTML=cursos.map(c=>`<option value="${c.cod}">${esc(c.nome)} (${c.cod})</option>`).join('');
+  const saved=store.get('sc-grade-curso');
+  const fromH=H&&H.cursoCod?+H.cursoCod:null;
+  const pick=[saved,fromH].find(v=>v&&cursos.some(c=>c.cod===v));
+  if(pick)$('#curso').value=pick;
+  renderList();renderGrid();
+}
+
+/* situação da disciplina em relação ao histórico */
+function relation(code){
+  if(!H)return null;
+  const pend=(H.pend||[]).find(p=>p.c===code||(H.equiv&&H.equiv[code]===p.c));
+  if(pend)return {k:pend.st==='cur'?'cur':'need',l:pend.st==='cur'?'Cursando agora':'Falta',p:pend};
+  if((H.done||[]).includes(code))return {k:'ok',l:'Aprovada'};
+  const d=DATA.disc[code];
+  if(H.matriz&&d&&Object.values(d.t).some(t=>(t.opt||[]).includes(String(H.matriz))))return {k:'opt',l:'Optativa da sua matriz'};
+  return null;
+}
+
+function discBlock(code,open){
+  const d=DATA.disc[code];if(!d)return '';
+  const rel=relation(code);
+  const turmas=Object.entries(d.t);
+  const selHere=turmas.filter(([t])=>SEL.includes(turmaKey(code,t))).map(([t])=>t);
+  const flags=(selHere.length?`<span class="flag sel">${esc(selHere.join(', '))}</span>`:'')+(rel?`<span class="flag ${rel.k}">${esc(rel.l)}</span>`:'');
+  const aulas=d.ap+d.aa;
+  const sub=`<span class="mono">${esc(code)}</span> · ${aulas} aulas/sem${d.aa?` (${d.aa} assíncronas)`:''}${d.he?` · ${d.he} h extensionistas`:''} · ${turmas.length} ${turmas.length===1?'turma':'turmas'}${rel&&rel.p&&rel.p.p?` · ${rel.p.p}º período`:''}`;
+  let body='';
+  if(open){
+    body='<div class="turmas">'+turmas.map(([t,x])=>{
+      const k=turmaKey(code,t),on=SEL.includes(k);
+      const clash=on?[]:conflictsWith(code,t);
+      const vag=[x.e,x.vt?`${x.vt} vagas${x.vc?` (${x.vc} p/ calouros)`:''}`:'',x.r?`reserva ${x.r.toLowerCase()}`:'',x.p&&x.p.length?'prioridade: '+x.p.slice(0,2).map(p=>p.replace(/^\d+\s*-\s*/,'')).join(', ')+(x.p.length>2?'…':''):''].filter(Boolean).join(' · ');
+      return `<div class="tm${on?' on':''}${clash.length?' clash':''}" data-k="${esc(k)}"><span class="code">${esc(t)}</span><span class="who">${esc(profOf(x)||'Professor(a) a definir')}</span><span class="when">${esc(fmtWhen(x.h))}</span><span class="vag">${esc(vag)}</span>${clash.length?`<span class="warn">Choca com ${esc(clash.join(', '))}</span>`:''}<button class="add" type="button" data-toggle="${esc(k)}">${on?'Remover':'Adicionar'}</button></div>`;}).join('')+'</div>';
+  }
+  return `<div class="disc" data-c="${esc(code)}"><button class="dh2" type="button" aria-expanded="${open}" data-open="${esc(code)}"><span class="nm">${esc(d.n)}</span><span class="rt2">${flags}</span><span class="sub">${sub}</span></button>${body}</div>`;
+}
+
+let OPEN=new Set();
+function renderList(){
+  if(!DATA)return;
+  const q=norm($('#q').value);const cod=+$('#curso').value;
+  const curso=DATA.cursos.find(c=>c.cod===cod);
+  let codes,groups=[];
+  if(q){
+    codes=Object.keys(DATA.disc).filter(c=>{const d=DATA.disc[c];return norm(c+' '+d.n+' '+Object.values(d.t).map(profOf).join(' ')).includes(q);}).slice(0,80);
+    groups=[['Resultados da busca em todos os cursos',codes]];
+  }else{
+    codes=curso?curso.disc.filter((c,i,a)=>a.indexOf(c)===i):[];
+    const need=[],opt=[],sel=[],other=[],ok=[];
+    codes.forEach(c=>{const r=relation(c);if(r&&(r.k==='need'||r.k==='cur'))need.push(c);else if(r&&r.k==='ok')ok.push(c);else if(r&&r.k==='opt')opt.push(c);else other.push(c);});
+    // turmas escolhidas de outros cursos
+    const extra=[...new Set(SEL.map(k=>k.split('|')[0]))].filter(c=>!codes.includes(c));
+    if(H&&H.cursoCod&&+H.cursoCod!==cod)groups.push(['Seu histórico é de outro curso; as marcações podem não se aplicar',[]]);
+    if(need.length)groups.push(['Faltam no seu histórico',need]);
+    if(extra.length)groups.push(['Escolhidas em outros cursos',extra]);
+    if(opt.length)groups.push(['Optativas válidas na sua matriz',opt]);
+    groups.push([H?'Outras disciplinas do curso':'Disciplinas do curso',other.sort((a,b)=>DATA.disc[a].n.localeCompare(DATA.disc[b].n,'pt'))]);
+    if(ok.length)groups.push(['Você já foi aprovado(a)',ok]);
+  }
+  const total=groups.reduce((a,g)=>a+g[1].length,0);
+  $('#list-count').textContent=q?`${total} ${total===1?'resultado':'resultados'}`:`${total} disciplinas`;
+  $('#list').innerHTML=total?groups.map(([t,cs])=>`<div class="grp"><h3>${esc(t)}${cs.length?`<span>${cs.length}</span>`:''}</h3>${cs.map(c=>discBlock(c,OPEN.has(c))).join('')}</div>`).join('')+(q&&total>=80?'<p class="more">Mostrando os 80 primeiros resultados. Refine a busca.</p>':''):'<div class="nodata">Nenhuma disciplina encontrada.</div>';
+}
+
+/* grade semanal */
+function cellsOf(code,t){const x=DATA.disc[code]&&DATA.disc[code].t[t];return x?x.h.map(parseH).filter(Boolean):[];}
+function conflictsWith(code,t){
+  const mine=cellsOf(code,t).map(c=>c.d+c.s);const out=new Set();
+  SEL.forEach(k=>{const [c,tt]=k.split('|');if(c===code)return;if(cellsOf(c,tt).some(x=>mine.includes(x.d+x.s)))out.add(c+' '+tt);});
+  return [...out];
+}
+function colorOf(k){const codes=[...new Set(SEL.map(s=>s.split('|')[0]))];return PAL[codes.indexOf(k.split('|')[0])%PAL.length];}
+function renderGrid(){
+  if(!DATA)return;
+  const map={};
+  SEL.forEach(k=>{const [c,t]=k.split('|');cellsOf(c,t).forEach(x=>{(map[x.d+x.s]=map[x.d+x.s]||[]).push({k,c,t,sala:x.sala});});});
+  const prev={};if(PREV){const [c,t]=PREV.split('|');cellsOf(c,t).forEach(x=>prev[x.d+x.s]=true);}
+  const used=new Set(Object.keys(map).concat(Object.keys(prev)).map(k=>k[0]));
+  const days=[2,3,4,5,6].concat(used.has('7')?[7]:[]);
+  let h=`<thead><tr><th class="slot"></th>${days.map(d=>`<th>${DIAS[d]}</th>`).join('')}</tr></thead><tbody>`;
+  SLOTS.forEach(([s,n],gi)=>{if(gi)h+=`<tr class="gap"><th></th>${days.map(()=>'<td></td>').join('')}</tr>`;
+    for(let i=1;i<=n;i++){const sl=s+i;h+=`<tr><th class="slot">${sl}<small>${HORA[sl]}</small></th>`+days.map(d=>{const k=d+sl;const it=map[k]||[];const pv=prev[k];
+      if(!it.length)return `<td>${pv?'<div class="cell prev"></div>':''}</td>`;
+      const clash=it.length>1;const a=it[0];
+      return `<td><div class="cell${clash?' clash':''}${pv?' prev':''}" style="background:${colorOf(a.k)}" title="${esc(it.map(x=>DATA.disc[x.c].n+' '+x.t).join(' × '))}" data-open-grid="${esc(a.c)}">${esc(clash?it.map(x=>x.c).join(' × '):a.c)}<small>${esc(clash?'choque':(a.t+(a.sala?' · '+a.sala:'')))}</small></div></td>`;}).join('')+'</tr>';}
+  });
+  $('#week').innerHTML=h+'</tbody>';
+  const aulas=new Set(Object.keys(map)).size;
+  const clashes=Object.values(map).filter(v=>v.length>1).length;
+  const disc=new Set(SEL.map(k=>k.split('|')[0])).size;
+  const async=SEL.reduce((a,k)=>a+((DATA.disc[k.split('|')[0]]||{}).aa||0),0);
+  $('#sum').innerHTML=`<span><b>${disc}</b>${disc===1?'disciplina':'disciplinas'}</span><span><b>${aulas}</b>aulas por semana</span>${async?`<span><b>${async}</b>assíncronas</span>`:''}<span class="${clashes?'bad':''}"><b>${clashes}</b>${clashes===1?'choque de horário':'choques de horário'}</span>`;
+  $('#chosen').innerHTML=SEL.map(k=>{const [c,t]=k.split('|');const d=DATA.disc[c];const x=d.t[t];return `<li><span class="sw2" style="background:${colorOf(k)}"></span><span><b>${esc(c)} ${esc(t)}</b> · ${esc(d.n)}<br><small style="color:var(--muted)">${esc(fmtWhen(x.h))}</small></span><button class="x" type="button" data-toggle="${esc(k)}">Remover</button></li>`;}).join('')||'<li style="color:var(--muted);display:block">Abra uma disciplina na lista e clique em <b>Adicionar</b> numa turma.</li>';
+  $('#copy').hidden=!SEL.length;$('#clear').hidden=!SEL.length;
+}
+function toggle(k){
+  const [c]=k.split('|');
+  if(SEL.includes(k))SEL=SEL.filter(x=>x!==k);
+  else{SEL=SEL.filter(x=>x.split('|')[0]!==c);SEL.push(k);}
+  store.set(KEY,SEL);PREV=null;renderList();renderGrid();
+}
+document.addEventListener('click',async e=>{
+  const tg=e.target.closest('[data-toggle]');if(tg){toggle(tg.dataset.toggle);return;}
+  const op=e.target.closest('[data-open]');if(op){const c=op.dataset.open;OPEN.has(c)?OPEN.delete(c):OPEN.add(c);renderList();return;}
+  const og=e.target.closest('[data-open-grid]');if(og){const c=og.dataset.openGrid;OPEN.add(c);if($('#q').value){$('#q').value='';}renderList();const el=document.querySelector(`.disc[data-c="${CSS.escape(c)}"]`);if(el)el.scrollIntoView({behavior:'smooth',block:'center'});return;}
+});
+document.addEventListener('mouseover',e=>{const tm=e.target.closest('.tm');const k=tm?tm.dataset.k:null;if(k!==PREV&&!(k&&SEL.includes(k))){PREV=k;renderGrid();}});
+document.addEventListener('mouseleave',()=>{if(PREV){PREV=null;renderGrid();}});
+$('#curso').addEventListener('change',()=>{store.set('sc-grade-curso',+$('#curso').value);OPEN=new Set();renderList();});
+$('#q').addEventListener('input',renderList);
+$('#clear').addEventListener('click',()=>{SEL=[];store.set(KEY,SEL);renderList();renderGrid();});
+$('#copy').addEventListener('click',async()=>{
+  const txt=SEL.map(k=>{const [c,t]=k.split('|');const d=DATA.disc[c];return `${c} ${t} - ${d.n} - ${fmtWhen(d.t[t].h)}`;}).join('\n');
+  try{await navigator.clipboard.writeText(txt);$('#copy').textContent='Lista copiada';}catch(e){$('#copy').textContent='Não consegui copiar';}
+  setTimeout(()=>$('#copy').textContent='Copiar lista para a matrícula',2000);
+});
+load();
+})();
 </script>
 <footer class="sitefoot"><div class="wrap"><span>Ferramenta independente feita por estudantes, sem vínculo oficial com a UTFPR. Confira sempre no Portal do Aluno.</span><span>Seus arquivos são lidos no seu navegador e não são enviados a servidor.</span></div></footer>
 </body>
