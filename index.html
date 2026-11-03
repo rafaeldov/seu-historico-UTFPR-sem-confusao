@@ -567,7 +567,7 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:6px 24px;justify-content:space-betw
   </div>
   <div class="db" id="d-body"></div>
 </aside>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/legacy/build/pdf.min.js"></script>
 <script>
 /* Leitor do Histórico Escolar UTFPR (Portal do Aluno). Entrada: itens de texto do pdf.js {p,x,y,s}. */
 (function(root){
@@ -1232,23 +1232,49 @@ window.addEventListener('hashchange',()=>route(true));
 
 /* ---------- envio do PDF ---------- */
 function status(kind,html){$('#up-status').innerHTML=kind?`<div class="status-box ${kind}">${kind==='load'?'<span class="spin"></span>':''}<div>${html}</div></div>`:'';}
+const PDFJS='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/';
+const errDet=e=>`<br><small style="opacity:.7">Detalhe técnico: ${esc((e&&(e.name||'Erro'))+': '+(e&&e.message||e))}</small>`;
+async function openPdf(bytes,useWorker){
+  const opts={data:bytes,isEvalSupported:false,disableFontFace:true,useSystemFonts:false,cMapUrl:PDFJS+'cmaps/',cMapPacked:true,standardFontDataUrl:PDFJS+'standard_fonts/'};
+  if(!useWorker)opts.worker=null;
+  const doc=await pdfjsLib.getDocument(opts).promise;
+  const raw=[];
+  for(let p=1;p<=doc.numPages;p++){const pg=await doc.getPage(p);const tc=await pg.getTextContent();tc.items.forEach(it=>{if(it.str&&it.str.trim())raw.push({p,x:it.transform[4],y:it.transform[5],s:it.str});});}
+  try{doc.destroy();}catch(e){}
+  return raw;
+}
 async function readPdf(file){
   if(!file)return;
-  if(!/pdf$/i.test(file.type)&&!/\.pdf$/i.test(file.name)){status('err','<b>Esse arquivo não é um PDF.</b> Gere o PDF pelo botão “Imprimir” do histórico e escolha “Salvar como PDF”.');return;}
   if(!window.pdfjsLib){status('err','<b>Não foi possível carregar o leitor de PDF.</b> Verifique sua conexão e recarregue a página.');return;}
   status('load','Lendo o histórico…');
+  // 1. ler o arquivo
+  let buf;
+  try{buf=await file.arrayBuffer();}
+  catch(e){
+    try{buf=await new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>ko(r.error);r.readAsArrayBuffer(file);});}
+    catch(e2){status('err','<b>Não consegui ler o arquivo no seu celular.</b> Isso costuma acontecer quando o PDF é escolhido direto do Google Drive, WhatsApp ou outro app. Baixe o PDF para o aparelho (pasta Downloads ou Arquivos) e escolha de lá.'+errDet(e2));return;}
+  }
+  // 2. conferir se é PDF pelo conteúdo, não pelo nome
+  const head=new TextDecoder('latin1').decode(new Uint8Array(buf,0,Math.min(1024,buf.byteLength)));
+  if(head.indexOf('%PDF')<0){status('err','<b>Esse arquivo não é um PDF.</b> Gere o PDF pelo botão “Imprimir” do histórico e escolha “Salvar como PDF”.');return;}
+  // 3. extrair o texto (com e sem worker)
+  let raw;
   try{
-    pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    const buf=await file.arrayBuffer();
-    const doc=await pdfjsLib.getDocument({data:new Uint8Array(buf),isEvalSupported:false}).promise;
-    const raw=[];
-    for(let p=1;p<=doc.numPages;p++){const pg=await doc.getPage(p);const tc=await pg.getTextContent();tc.items.forEach(it=>{if(it.str&&it.str.trim())raw.push({p,x:it.transform[4],y:it.transform[5],s:it.str});});}
-    if(raw.length<20){status('err','<b>Não encontrei texto nesse PDF.</b> Parece ser uma imagem ou foto do histórico. Gere o PDF direto do Portal do Aluno, pelo botão “Imprimir” e “Salvar como PDF”.');return;}
-    let data;
-    try{data=HistParser.parse(raw);}catch(e){status('err','<b>Esse PDF não parece ser o Histórico Escolar do Portal do Aluno da UTFPR.</b> Abra o histórico no portal, clique em “Imprimir” e salve como PDF.');return;}
-    if(!data.recs.length&&!Object.keys(data.matriz).length){status('err','<b>Li o PDF, mas não encontrei disciplinas.</b> Confira se o arquivo é o histórico completo, com todas as páginas.');return;}
-    status('',null);location.hash='resumo';load(data,false);
-  }catch(e){status('err','<b>Não consegui abrir esse PDF.</b> Ele pode estar protegido ou corrompido. Tente gerar de novo pelo portal.');}
+    pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS+'legacy/build/pdf.worker.min.js';
+    try{raw=await openPdf(new Uint8Array(buf.slice(0)),true);}
+    catch(e){if(e&&e.name==='PasswordException')throw e;raw=await openPdf(new Uint8Array(buf.slice(0)),false);}
+  }catch(e){
+    const msg=e&&e.name==='PasswordException'?'<b>Esse PDF está protegido por senha.</b> Gere o histórico de novo pelo portal, sem senha.':e&&e.name==='InvalidPDFException'?'<b>Esse PDF parece estar corrompido ou incompleto.</b> Gere de novo pelo portal e tente outra vez.':'<b>Não consegui abrir esse PDF neste navegador.</b> Atualize o navegador ou tente pelo Chrome ou Safari, fora de apps como Instagram ou WhatsApp.';
+    status('err',msg+errDet(e));return;
+  }
+  if(raw.length<20){status('err','<b>Não encontrei texto nesse PDF.</b> Parece ser uma imagem ou foto do histórico. Gere o PDF direto do Portal do Aluno, pelo botão “Imprimir” e “Salvar como PDF”.');return;}
+  // 4. interpretar o histórico
+  let data;
+  try{data=HistParser.parse(raw);}catch(e){status('err','<b>Esse PDF não parece ser o Histórico Escolar do Portal do Aluno da UTFPR.</b> Abra o histórico no portal, clique em “Imprimir” e salve como PDF.'+(e&&e.message!=='formato'?errDet(e):''));return;}
+  if(!data.recs.length&&!Object.keys(data.matriz).length){status('err','<b>Li o PDF, mas não encontrei disciplinas.</b> Se você gerou o PDF pelo celular, tente gerar pelo computador: o portal muda o layout no celular. Confira também se o arquivo tem todas as páginas.');return;}
+  // 5. montar a análise
+  try{status('',null);location.hash='resumo';load(data,false);}
+  catch(e){goUpload();status('err','<b>Li o histórico, mas algo falhou ao montar a análise.</b> Me envie essa mensagem para eu corrigir.'+errDet(e));}
 }
 $('#file').addEventListener('change',e=>{readPdf(e.target.files[0]);e.target.value='';});
 const drop=$('#drop');
