@@ -570,7 +570,46 @@ function model(){
   const total=r.geral?r.geral[0]:comps.filter(c=>c.key!=='ext').reduce((t,c)=>t+c.total,0);
   const done=r.geral?r.geral[2]:comps.filter(c=>c.key!=='ext').reduce((t,c)=>t+c.done,0);
   const cursando=D.recs.filter(x=>x.st==='cursando');
-  return {st,pend,chOf,est,comps,conj,extC,total,done,cursando};
+  const M0={st,pend,chOf,est,comps,conj,extC,total,done,cursando};
+  M0.prev=forecast(M0);
+  return M0;
+}
+
+/* ---------- previsão de formatura ---------- */
+const termAdd=(a,s,n)=>{let i=a*2+(s-1)+n;return {a:Math.floor(i/2),s:i%2+1};};
+const termLbl=t=>t.a+'/'+t.s;
+function forecast(M){
+  // carga em sala que falta: obrigatórias com carga conhecida + optativas
+  const cls=M.pend.filter(m=>m.ch!=null);
+  const acts=M.pend.filter(m=>m.ch==null);
+  const optRem=M.conj.reduce((t,c)=>t+Math.max(0,c.cho-c.done),0)||(!M.conj.length&&D.resumo&&D.resumo.opt?Math.max(0,D.resumo.opt[0]-D.resumo.opt[2]):0);
+  const obrCls=cls.reduce((t,m)=>t+m.ch,0);
+  const remaining=obrCls+optRem;
+  // o que já está encaminhado: cursando, exames marcados e optativas em curso/exame
+  let covered=0;
+  cls.forEach(m=>{const s=M.st[m.c].state;if(s==='cur'||s==='exam'||s==='wait')covered+=m.ch;});
+  M.conj.forEach(c=>{covered+=c.curCH+(c.mark?c.rem:0);});
+  const after=Math.max(0,remaining-covered);
+  const actsOpen=acts.filter(m=>M.st[m.c].state==='pend'||M.st[m.c].state==='fail');
+  const extOpen=M.extC&&M.extC.rem>0&&!M.extC.mark;
+  // ritmo: horas aprovadas por semestre nos últimos semestres cursados
+  const cur=D.matTerm||(()=>{const k=D.recs.filter(r=>r.a).map(r=>r.a*10+r.s).sort().pop();return k?{a:Math.floor(k/10),s:k%10}:{a:new Date().getFullYear(),s:new Date().getMonth()<6?1:2};})();
+  const curK=cur.a*10+cur.s;
+  const by={};D.recs.forEach(r=>{if(!r.a||r.st==='aproveitada')return;const k=r.a*10+r.s;if(k>=curK)return;(by[k]=by[k]||{ap:0,n:0});by[k].n++;if(r.st==='aprovada'||r.st==='suficiencia')by[k].ap+=(r.ch||0);});
+  const last=Object.keys(by).map(Number).sort((a,b)=>b-a).slice(0,4);
+  const pace=last.length?Math.max(30,last.reduce((t,k)=>t+by[k].ap,0)/last.length):null;
+  const nPer=Math.max(...MAT().map(m=>m.p||0),1);
+  const matrixPace=Math.round(M.total/nPer);
+  const scen=[];
+  const fin=n=>termAdd(cur.a,cur.s,Math.max(0,n-1));
+  // 1) com o que já está encaminhado
+  if(after===0)scen.push({k:'best',t:fin(1),l:'Se você for aprovado no que está cursando e nos exames marcados',d:'Toda a carga de disciplinas fica completa neste semestre.'});
+  else scen.push({k:'best',t:fin(1+Math.ceil(after/matrixPace)),l:'Aprovado no que está cursando, depois no ritmo da matriz',d:`Depois deste semestre ainda faltariam ${fh(after)} de disciplinas.`});
+  // 2) ritmo da matriz, sem contar o que está em curso
+  scen.push({k:'mat',t:fin(Math.max(1,Math.ceil(remaining/matrixPace))),l:`No ritmo da matriz (cerca de ${fh(matrixPace)} por semestre)`,d:`Faltam ${fh(remaining)} de disciplinas, contando o semestre atual.`});
+  // 3) ritmo da própria pessoa
+  if(pace)scen.push({k:'you',t:fin(Math.max(1,Math.ceil(remaining/pace))),l:`No seu ritmo dos últimos ${last.length} semestres (${fh(Math.round(pace))} aprovadas por semestre)`,d:`Média de horas aprovadas por semestre em ${last.sort((a,b)=>a-b).map(k=>Math.floor(k/10)+'/'+k%10).join(', ')}.`});
+  return {cur,remaining,covered,after,scen,actsOpen,extOpen,pace,matrixPace};
 }
 
 /* ---------- carregar ---------- */
@@ -593,7 +632,7 @@ function saveForGrade(){
     const equiv={};D.recs.forEach(r=>{if(r.map)equiv[r.c]=r.map;});
     const conj=M.conj.map(c=>({id:c.id,nome:c.nome,cho:c.cho,done:c.done,rem:c.rem,codes:[...new Set(D.recs.filter(r=>r.g===c.id).map(r=>r.c))]}));
     const ext=M.extC?{total:M.extC.total,done:M.extC.done}:null;
-    localStorage.setItem('sc-historico',JSON.stringify({v:1,t:Date.now(),curso:D.info.cursoNome,cursoCod:D.info.cursoCod,matriz:D.info.matrizCod,periodo:D.info.periodo,emitido:D.info.emitido,pct:M.total?Math.round(M.done/M.total*100):0,doneH:M.done,totalH:M.total,pend,done,equiv,conj,ext,cursando:M.cursando.map(r=>r.map||r.c)}));
+    localStorage.setItem('sc-historico',JSON.stringify({v:1,t:Date.now(),curso:D.info.cursoNome,cursoCod:D.info.cursoCod,matriz:D.info.matrizCod,periodo:D.info.periodo,emitido:D.info.emitido,pct:M.total?Math.round(M.done/M.total*100):0,doneH:M.done,totalH:M.total,pend,done,equiv,conj,ext,cursando:M.cursando.map(r=>r.map||r.c),prev:M.prev?termLbl(M.prev.scen[0].t):null}));
   }catch(e){}
 }
 function setMark(k,v){if(v==='pend')delete MARKS[k];else MARKS[k]=v;if(!IS_EX){store.set(MKEY,MARKS);}renderAll();if(!IS_EX)saveForGrade();if(!$('#drawer').hidden&&openCode)openDrawer(openCode,lastFocus,true);}
@@ -676,6 +715,16 @@ function renderAll(){
 
   // coluna lateral
   const side=[];
+  {const F=M.prev;const main=F.scen[0];const others=F.scen.slice(1);
+   const pend=[...F.actsOpen.map(m=>m.n),F.extOpen?'horas de extensão':''].filter(Boolean);
+   const allDoneNow=F.remaining===0;
+   side.push(`<section class="card alert" aria-labelledby="h-prev"><div class="row"><span class="tag ok">Previsão</span></div>
+     <h3 id="h-prev">Previsão de formatura</h3>
+     ${allDoneNow?`<p><b>Todas as disciplinas já estão concluídas.</b></p>`:`<div class="headline" style="margin-top:2px"><span class="big" style="font-size:44px">${termLbl(main.t)}</span><span class="of">fim do semestre</span></div><p>${esc(main.l)}. ${esc(main.d)}</p>`}
+     ${others.length&&!allDoneNow?`<ul class="mini-list">${others.map(o=>`<li><button type="button" tabindex="-1" style="cursor:default"><span class="n">${esc(o.l)}</span><b class="mono">${termLbl(o.t)}</b></button></li>`).join('')}</ul>`:''}
+     ${pend.length?`<p>Também precisa estar registrado: ${esc(pend.join(', '))}. Atividades sem turma podem ser feitas em paralelo às disciplinas.</p>`:''}
+     <p style="font-size:12.5px">A previsão é uma estimativa: não considera pré-requisitos, oferta de turmas nem o prazo máximo do curso. A colação acontece depois do fim do semestre, no calendário da UTFPR.</p>
+   </section>`);}
   if(D.chsFaltTotal!=null){
     const tot=D.chsFaltTotal,lim=D.limite||16;
     let proj=tot;Object.entries(D.faltChs||{}).forEach(([c,v])=>{const s=M.st[c]?M.st[c].state:'pend';if(s==='cur'||s==='exam'||s==='wait'||s==='done')proj-=v;});

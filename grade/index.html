@@ -65,10 +65,14 @@ table.week{border-collapse:separate;border-spacing:3px;width:100%;min-width:640p
 table.week th{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:6px 2px}
 table.week th.slot{width:62px;text-align:left;font-family:var(--f-mono);letter-spacing:0;font-size:11px}
 table.week th.slot small{display:block;color:#5d5d5d;font-size:9.5px}
-table.week td{height:38px;border-radius:4px;background:var(--sunk);vertical-align:top;padding:0;position:relative}
+table.week td{height:40px;border-radius:4px;background:var(--sunk);vertical-align:top;padding:0;position:relative}
 table.week tr.gap td,table.week tr.gap th{height:6px;background:none;padding:0}
 .cell{height:100%;border-radius:4px;padding:3px 5px;font-size:10.5px;line-height:1.2;overflow:hidden;color:var(--on);font-weight:700;cursor:pointer}
-.cell small{display:block;font-weight:500;opacity:.85;font-family:var(--f-mono);font-size:9.5px}
+.cell .cc{display:block;font-family:var(--f-mono);font-size:10px;font-weight:700;opacity:.8}
+.cell .cn{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;font-size:11px;font-weight:700;line-height:1.2}
+.cell.tall .cn{-webkit-line-clamp:3}
+.cell small{display:block;font-weight:500;opacity:.85;font-family:var(--f-mono);font-size:9.5px;margin-top:2px}
+table.week td>.cell{position:absolute;inset:0}
 .cell.clash{background:repeating-linear-gradient(135deg,var(--pink) 0 6px,#b0238a 6px 12px)!important;color:var(--on)}
 .cell.prev{outline:2px dashed var(--ink);outline-offset:-2px;background:rgba(245,245,245,.12)!important;color:var(--ink)}
 .sumbar{display:flex;flex-wrap:wrap;gap:8px 18px;padding:14px 16px;border-top:1px solid var(--line);font-size:13.5px;color:var(--muted)}
@@ -259,11 +263,15 @@ function renderGrid(){
   const used=new Set(Object.keys(map).concat(Object.keys(prev)).map(k=>k[0]));
   const days=[2,3,4,5,6].concat(used.has('7')?[7]:[]);
   let h=`<thead><tr><th class="slot"></th>${days.map(d=>`<th>${DIAS[d]}</th>`).join('')}</tr></thead><tbody>`;
+  const cellKey=k=>{const it=map[k]||[];return it.length===1?it[0].k:(it.length?'clash:'+it.map(x=>x.k).join('+'):'')+(prev[k]?'|p':'');};
   SLOTS.forEach(([s,n],gi)=>{if(gi)h+=`<tr class="gap"><th></th>${days.map(()=>'<td></td>').join('')}</tr>`;
-    for(let i=1;i<=n;i++){const sl=s+i;h+=`<tr><th class="slot">${sl}<small>${HORA[sl]}</small></th>`+days.map(d=>{const k=d+sl;const it=map[k]||[];const pv=prev[k];
-      if(!it.length)return `<td>${pv?'<div class="cell prev"></div>':''}</td>`;
-      const clash=it.length>1;const a=it[0];
-      return `<td><div class="cell${clash?' clash':''}${pv?' prev':''}" style="background:${colorOf(a.k)}" title="${esc(it.map(x=>DATA.disc[x.c].n+' '+x.t).join(' × '))}" data-open-grid="${esc(a.c)}">${esc(clash?it.map(x=>x.c).join(' × '):a.c)}<small>${esc(clash?'choque':(a.t+(a.sala?' · '+a.sala:'')))}</small></div></td>`;}).join('')+'</tr>';}
+    const span={},skip={};
+    days.forEach(d=>{let i=1;while(i<=n){const k0=d+s+i,ck=cellKey(k0);let j=i+1;if(ck&&!ck.startsWith('clash')){while(j<=n&&cellKey(d+s+j)===ck)j++;}span[k0]=j-i;for(let x=i+1;x<j;x++)skip[d+s+x]=true;i=j;}});
+    for(let i=1;i<=n;i++){const sl=s+i;h+=`<tr><th class="slot">${sl}<small>${HORA[sl]}</small></th>`+days.map(d=>{const k=d+sl;if(skip[k])return '';const it=map[k]||[];const pv=prev[k];const rs=span[k]>1?` rowspan="${span[k]}"`:'';
+      if(!it.length)return `<td${rs}>${pv?'<div class="cell prev"></div>':''}</td>`;
+      const clash=it.length>1;const a=it[0];const nm=DATA.disc[a.c].n;
+      const last=s+(i+(span[k]||1)-1);
+      return `<td${rs}><div class="cell${clash?' clash':''}${pv?' prev':''}${span[k]>1?' tall':''}" style="background:${colorOf(a.k)}" title="${esc(it.map(x=>x.c+' '+x.t+' · '+DATA.disc[x.c].n).join(' × '))}" data-open-grid="${esc(a.c)}">${clash?`<span class="cc">Choque</span><span class="cn">${esc(it.map(x=>x.c+' '+DATA.disc[x.c].n).join(' × '))}</span>`:`<span class="cc">${esc(a.c)}</span><span class="cn">${esc(nm)}</span><small>${esc(a.t)}${a.sala?' · '+esc(a.sala):''}${span[k]>1?' · '+sl+'–'+last:''}</small>`}</div></td>`;}).join('')+'</tr>';}
   });
   $('#week').innerHTML=h+'</tbody>';
   const aulas=new Set(Object.keys(map)).size;

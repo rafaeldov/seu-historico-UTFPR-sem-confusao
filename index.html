@@ -98,7 +98,7 @@
   if(!h){return;}
   const pend=(h.pend||[]).filter(p=>p.st!=='cur').length;
   const d=new Date(h.t);
-  el.innerHTML=`<span class="pct">${h.pct}%</span><div><h3>${h.curso?h.curso+' · ':''}seu último histórico</h3><p>${(h.doneH||0).toLocaleString('pt-BR')} de ${(h.totalH||0).toLocaleString('pt-BR')} h integralizadas · ${pend} ${pend===1?'obrigatória pendente':'obrigatórias pendentes'} · lido em ${d.toLocaleDateString('pt-BR')}</p></div><div class="acts"><a class="btn primary sm" href="/historico/">Enviar de novo</a><button class="btn ghost sm" type="button" id="me-clear">Apagar deste navegador</button></div>`;
+  el.innerHTML=`<span class="pct">${h.pct}%</span><div><h3>${h.curso?h.curso+' · ':''}seu último histórico</h3><p>${(h.doneH||0).toLocaleString('pt-BR')} de ${(h.totalH||0).toLocaleString('pt-BR')} h integralizadas · ${pend} ${pend===1?'obrigatória pendente':'obrigatórias pendentes'} · lido em ${d.toLocaleDateString('pt-BR')}${h.prev?` · formatura prevista: <b style="color:var(--ink)">${h.prev}</b>`:''}</p></div><div class="acts"><a class="btn primary sm" href="/historico/">Enviar de novo</a><button class="btn ghost sm" type="button" id="me-clear">Apagar deste navegador</button></div>`;
   el.hidden=false;el.className='me';
   document.getElementById('me-clear').addEventListener('click',()=>{try{localStorage.removeItem('sc-historico');}catch(e){}el.hidden=true;});
 })();
