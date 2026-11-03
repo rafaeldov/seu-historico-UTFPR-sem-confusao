@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Projetos de extensão · UTFPR sem confusão</title>
+<meta name="description" content="Projetos de extensão ativos na UTFPR Curitiba, com inscrições, carga horária e contato.">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230A0A0A'/%3E%3Cg fill='%23C9F22C'%3E%3Crect x='42' y='14' width='16' height='72' rx='8'/%3E%3Crect x='42' y='14' width='16' height='72' rx='8' transform='rotate(60 50 50)'/%3E%3Crect x='42' y='14' width='16' height='72' rx='8' transform='rotate(120 50 50)'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<nav class="topnav" aria-label="Site"><div class="wrap in">
+  <a class="brand" href="/"><svg viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor"><rect x="41" y="4" width="18" height="92" rx="9"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(60 50 50)"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(120 50 50)"/></g></svg><span>UTFPR sem confusão</span><small>Curitiba</small></a>
+  <div class="navlinks"><a href="/">Início</a><a href="/historico/">Histórico</a><a href="/grade/">Montar grade</a><a href="/extensao/" aria-current="page">Extensão</a></div>
+</div></nav>
+<style>
+.ext-hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.ext-hero .wrap{padding-block:48px 36px;position:relative}
+.ext-hero h1{font-family:var(--f-disp);font-style:italic;font-weight:800;text-transform:uppercase;font-size:clamp(36px,7vw,84px);letter-spacing:-.03em;line-height:.92;margin-top:16px}
+.ext-hero h1 .sl{color:var(--pink)}
+.ext-hero .lead{color:var(--muted);max-width:60ch;margin-top:18px;font-size:16px}
+.ext-hero .asterisk{color:var(--pink);right:-60px;top:-50px;width:240px;height:240px}
+.ext-stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.ext-stats span{border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:13.5px;color:var(--muted);background:var(--surface)}
+.ext-stats b{color:var(--ink);font-family:var(--f-disp);font-size:18px;margin-right:6px}
+.need{margin-top:20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;border:1px solid var(--pink);background:var(--bad-bg);border-radius:6px;padding:14px 16px;font-size:14px}
+.need .k{font-family:var(--f-disp);font-style:italic;font-weight:800;font-size:26px;color:var(--pink);line-height:1}
+.need p{flex:1;min-width:220px}
+.notice{margin-top:20px;border:1px solid var(--yellow);background:var(--warn-bg);border-radius:6px;padding:12px 14px;font-size:14px}
+.notice b{color:var(--yellow)}
+.ext-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:28px 0 16px}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;cursor:pointer;user-select:none;border:1px solid var(--line);border-radius:6px;padding:10px 12px;background:var(--surface)}
+.toggle input{accent-color:var(--lime);width:16px;height:16px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:12px}
+.pj{display:flex;flex-direction:column;gap:10px;text-align:left;width:100%;padding:18px;border-radius:6px;border:1px solid var(--line);background:var(--surface);cursor:pointer;transition:transform .14s ease,border-color .14s ease;color:var(--ink)}
+.pj:hover{transform:translateY(-2px);border-color:var(--ink)}
+.pj .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.pj .area{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.pj h3{font-family:var(--f-disp);font-weight:700;font-size:18px;line-height:1.2}
+.pj p.res{color:var(--muted);font-size:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.pj .meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);margin-top:auto;padding-top:10px;border-top:1px solid var(--line)}
+.pj .meta b{color:var(--ink);font-weight:600}
+.st-open{background:var(--lime);color:var(--on)} .st-soon{background:var(--yellow);color:var(--on)} .st-closed{background:#2C2C2C;color:var(--muted)} .st-run{background:var(--info-bg);color:var(--info)} .st-ended{background:#2C2C2C;color:var(--muted)}
+.notice.src{border-color:var(--line);background:var(--surface);color:var(--muted)}
+.notice.src b{color:var(--ink)}
+.stag{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 8px;border-radius:4px;white-space:nowrap}
+.dl{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin:0;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.dl div{display:grid;grid-template-columns:140px minmax(0,1fr);gap:12px;padding:10px 12px;border-top:1px solid var(--line);background:var(--bg)}
+.dl div:first-child{border-top:0}
+.dl dt{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;padding-top:2px}
+.dl dd{margin:0;font-size:14px;overflow-wrap:anywhere}
+.dl dd a{color:var(--lime)}
+.copy{background:none;border:1px solid var(--line);border-radius:4px;color:var(--muted);font-size:11px;padding:2px 6px;margin-left:6px;cursor:pointer}
+.dlead{color:var(--ink);font-size:15px;line-height:1.6}
+.dbtns{display:flex;flex-wrap:wrap;gap:8px}
+@media (max-width:620px){.dl div{grid-template-columns:minmax(0,1fr);gap:2px}}
+</style>
+
+<header class="ext-hero">
+  <svg class="asterisk" viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor"><rect x="41" y="4" width="18" height="92" rx="9"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(60 50 50)"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(120 50 50)"/></g></svg>
+  <div class="wrap">
+    <p class="eyebrow"><b style="color:var(--pink)">Extensão</b> . UTFPR . Curitiba .</p>
+    <h1><span class="sl">-</span>Projetos de extensão<span class="sl">//</span></h1>
+    <p class="lead">Ações de extensão em andamento no câmpus Curitiba: projetos, programas, eventos e oficinas. Toque em uma ação para ver o objetivo, o período e o contato de quem coordena.</p>
+    <div class="ext-stats" id="stats"></div>
+    <div id="need" hidden></div>
+    <div id="notice" hidden></div>
+  </div>
+</header>
+
+<main class="wrap" style="padding-block:8px 64px">
+  <div class="ext-tools">
+    <label class="search">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="Buscar por nome, tema, departamento ou coordenador(a)" autocomplete="off" aria-label="Buscar projetos">
+    </label>
+    <select id="f-area" aria-label="Área"><option value="">Todas as áreas</option></select>
+    <select id="f-tipo" aria-label="Tipo"><option value="">Todos os tipos</option></select>
+    <select id="f-dep" aria-label="Departamento"><option value="">Todos os departamentos</option></select>
+    <select id="f-mod" aria-label="Modalidade" hidden><option value="">Qualquer modalidade</option></select>
+    <label class="toggle" id="t-open" hidden><input type="checkbox" id="f-open"> Só inscrições abertas</label>
+    <label class="toggle"><input type="checkbox" id="f-ended"> Mostrar encerradas</label>
+  </div>
+  <div class="resultline"><span id="count"></span><button id="clear" type="button" hidden>Limpar filtros</button></div>
+  <div class="cards" id="cards"></div>
+  <div class="empty" id="empty" hidden>Nenhum projeto com esses filtros. Tente outra busca ou limpe os filtros.</div>
+</main>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="d-title" hidden>
+  <div class="dh"><div class="t"><div class="code" id="d-area"></div><h2 id="d-title"></h2><div class="kind" id="d-dep"></div></div>
+  <button class="xbtn" id="d-close" type="button" aria-label="Fechar detalhes"><svg viewBox="0 0 16 16" width="16" height="16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>
+  <div class="db" id="d-body"></div>
+</aside>
+
+<script src="/assets/config.js"></script>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+
+/* CSV com aspas, vírgulas e quebras de linha dentro de campos */
+function parseCSV(t){
+  const rows=[];let row=[],f='',q=false;
+  for(let i=0;i<t.length;i++){const c=t[i];
+    if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c;}
+    else if(c==='"')q=true;
+    else if(c===','){row.push(f);f='';}
+    else if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f='';}
+    else f+=c;}
+  if(f!==''||row.length){row.push(f);rows.push(row);}
+  return rows.filter(r=>r.some(x=>x.trim()!==''));
+}
+/* colunas reconhecidas pelo início do cabeçalho, sem acento */
+const COLS=[['nome',/^(projeto|nome|titulo)/],['tipo',/^(tipo|modalidade da acao)/],['resumo',/^(resumo|descri|objetivo)/],['inicio',/^inicio/],['termino',/^(termino|fim)/],['area',/^(area|tema)/],['dep',/^(departamento|unidade|curso)/],['coord',/^coordena/],['contato',/^(contato|e-?mail)/],['ch',/^carga/],['vagas',/^vagas/],['insc',/^inscri(c|ç)(oes|ões)?$|^status|^inscricoes$/],['prazo',/^prazo/],['mod',/^modalidade/],['local',/^local/],['quando',/^(dias|horario)/],['publico',/^publico/],['link',/^link de inscri|^inscricao link|^formulario/],['site',/^(link do projeto|site|pagina|instagram)/],['atual',/^atualiza/]];
+function toProjects(rows){
+  const h=rows[0].map(norm);const idx={};
+  COLS.forEach(([k,re])=>{const i=h.findIndex((x,j)=>re.test(x)&&!Object.values(idx).includes(j));if(i>=0)idx[k]=i;});
+  return rows.slice(1).map(r=>{const o={};Object.entries(idx).forEach(([k,i])=>o[k]=(r[i]||'').trim());return o;}).filter(o=>o.nome);
+}
+const parseDate=s=>{const m=String(s||'').match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);if(!m)return null;const y=+m[3]<100?2000+ +m[3]:+m[3];return new Date(y,+m[2]-1,+m[1],23,59);};
+function status(p){
+  const v=norm(p.insc);const d=parseDate(p.prazo);const now=new Date();const fim=parseDate(p.termino);
+  if(fim&&fim<now)return {k:'ended',l:'Encerrada'};
+  if(/abert/.test(v)){if(d&&d<now)return {k:'closed',l:'Prazo encerrado'};return {k:'open',l:'Inscrições abertas'};}
+  if(/breve|futur/.test(v))return {k:'soon',l:'Inscrições em breve'};
+  if(/fluxo|continu|sempre/.test(v))return {k:'open',l:'Fluxo contínuo'};
+  if(/fechad|encerrad/.test(v))return {k:'closed',l:'Inscrições fechadas'};
+  return {k:'run',l:'Em andamento'};
+}
+const mmYY=s=>{const d=parseDate(s);return d?d.toLocaleDateString('pt-BR',{month:'short',year:'numeric'}).replace('.',''):'';};
+const daysLeft=p=>{const d=parseDate(p.prazo);if(!d)return null;return Math.ceil((d-new Date())/864e5);};
+
+let ALL=[],SRC_DEFAULT=false;
+const DEFAULT_CSV='/extensao/acoes-extensao.csv';
+async function loadData(){
+  const cfg=(window.SC_CONFIG||{}).extensaoCsv;
+  const tryLoad=async u=>{const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const t=await r.text();if(/^\s*</.test(t))throw new Error('a planilha não está publicada como CSV');return toProjects(parseCSV(t));};
+  if(cfg){try{ALL=await tryLoad(cfg);return;}catch(e){showNotice('<b>Não consegui ler a planilha agora</b> ('+esc(e.message)+'). Mostrando a última lista salva no site.',false);}}
+  try{ALL=await tryLoad(DEFAULT_CSV);SRC_DEFAULT=true;if(!cfg)showNotice('<b>Fonte:</b> relatório de ações de extensão em andamento do câmpus Curitiba, elaborado pelo DEPEX-CT com dados do Sistema de Extensão/SAP de 29/07/2026. Confirme inscrições e vagas com a coordenação de cada ação.',true);}
+  catch(e){showNotice('<b>Não consegui carregar as ações de extensão</b> ('+esc(e.message)+'). Recarregue a página.',false);}
+}
+function showNotice(h,src){const n=$('#notice');n.innerHTML=h;n.className='notice'+(src?' src':'');n.hidden=false;}
+
+function renderNeed(){
+  let h=null;try{h=JSON.parse(localStorage.getItem('sc-historico')||'null');}catch(e){}
+  if(!h||!h.ext)return;const falta=Math.max(0,h.ext.total-h.ext.done);
+  const el=$('#need');el.className='need';el.hidden=false;
+  el.innerHTML=falta?`<span class="k">${falta} h</span><p>É quanto falta de <b>carga extensionista</b> no seu último histórico (${h.ext.done} de ${h.ext.total} h registradas). Se você já cumpriu e só falta o registro, marque isso na página do Histórico.</p><a class="btn ghost sm" href="/historico/">Abrir histórico</a>`:`<span class="k" style="color:var(--lime)">OK</span><p>A carga extensionista já aparece cumprida no seu último histórico.</p>`;
+  if(!falta)el.style.borderColor='var(--lime)',el.style.background='var(--accent-soft)';
+}
+function fillFilters(){
+  const opt=(sel,vals)=>{const v=[...new Set(vals.filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt'));$(sel).innerHTML=$(sel).options[0].outerHTML+v.map(x=>`<option>${esc(x)}</option>`).join('');return v.length;};
+  opt('#f-area',ALL.map(p=>p.area));opt('#f-tipo',ALL.map(p=>p.tipo));opt('#f-dep',ALL.map(p=>p.dep));
+  if(opt('#f-mod',ALL.map(p=>p.mod)))$('#f-mod').hidden=false;
+  const live=ALL.filter(p=>status(p).k!=='ended');
+  const open=live.filter(p=>status(p).k==='open').length;if(open)$('#t-open').hidden=false;
+  const areas=new Set(live.map(p=>p.area).filter(Boolean)).size,deps=new Set(live.map(p=>p.dep).filter(Boolean)).size;
+  $('#stats').innerHTML=`<span><b>${live.length}</b>${live.length===1?'ação em andamento':'ações em andamento'}</span><span><b>${areas}</b>áreas temáticas</span><span><b>${deps}</b>departamentos</span>${open?`<span><b>${open}</b>com inscrições abertas</span>`:''}`;
+}
+function render(){
+  const q=norm($('#q').value),a=$('#f-area').value,t=$('#f-tipo').value,dp=$('#f-dep').value,m=$('#f-mod').value,o=$('#f-open').checked,en=$('#f-ended').checked;
+  const ord={open:0,soon:1,run:2,closed:3,ended:4};
+  const list=ALL.filter(p=>{const k=status(p).k;return (en||k!=='ended')&&(!a||p.area===a)&&(!t||p.tipo===t)&&(!dp||p.dep===dp)&&(!m||p.mod===m)&&(!o||k==='open')&&(!q||norm([p.nome,p.resumo,p.area,p.dep,p.coord,p.tipo,p.publico].join(' ')).includes(q));})
+    .sort((x,y)=>ord[status(x).k]-ord[status(y).k]||(daysLeft(x)??999)-(daysLeft(y)??999)||x.nome.localeCompare(y.nome,'pt'));
+  $('#cards').innerHTML=list.map(p=>{const s=status(p);const dl=daysLeft(p);
+    const prazo=s.k==='open'&&dl!=null&&dl>=0?`<span>Inscrições até <b>${esc(p.prazo)}</b>${dl<=7?` · ${dl===0?'último dia':dl+(dl===1?' dia':' dias')}`:''}</span>`:'';
+    const ate=p.termino?`<span>${s.k==='ended'?'Terminou em':'Até'} <b>${esc(mmYY(p.termino))}</b></span>`:'';
+    return `<button class="pj" type="button" data-i="${ALL.indexOf(p)}"><div class="top"><span class="area">${esc(p.area||'Extensão')}${p.tipo?' · '+esc(p.tipo):''}</span><span class="stag st-${s.k}">${esc(s.l)}</span></div><h3>${esc(p.nome)}</h3>${p.resumo?`<p class="res">${esc(p.resumo)}</p>`:''}<div class="meta">${p.dep?`<span><b>${esc(p.dep)}</b></span>`:''}${p.coord?`<span>${esc(p.coord)}</span>`:''}${ate}${p.ch?`<span><b>${esc(p.ch)} h</b> extensionistas</span>`:''}${p.vagas?`<span><b>${esc(p.vagas)}</b> vagas</span>`:''}${prazo}</div></button>`;}).join('');
+  $('#empty').hidden=list.length>0;
+  const tot=en?ALL.length:ALL.filter(p=>status(p).k!=='ended').length;
+  $('#count').textContent=`${list.length} de ${tot} ${tot===1?'ação':'ações'}`;
+  $('#clear').hidden=!(q||a||t||dp||m||o);
+}
+let lastFocus=null;
+function open(i,trigger){
+  const p=ALL[i];if(!p)return;lastFocus=trigger;const s=status(p);
+  $('#d-area').textContent=(p.area||'Extensão')+(p.tipo?' · '+p.tipo:'');$('#d-title').textContent=p.nome;$('#d-dep').textContent=p.dep||'';
+  const row=(t,v,html)=>v?`<div><dt>${t}</dt><dd>${html||esc(v)}</dd></div>`:'';
+  const isMail=v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  const linkOut=v=>/^https?:\/\//i.test(v)?`<a href="${esc(v)}" target="_blank" rel="noopener">${esc(v.replace(/^https?:\/\//,''))}</a>`:esc(v);
+  let h=`<div class="dbtns"><span class="stag st-${s.k}">${esc(s.l)}</span>${p.tipo?`<span class="stag st-closed">${esc(p.tipo)}</span>`:''}</div>`;
+  if(p.resumo)h+=`<p class="dlead">${esc(p.resumo)}</p>`;
+  h+=`<dl class="dl">${row('Período',p.inicio||p.termino,esc([p.inicio,p.termino].filter(Boolean).join(' a ')))}${row('Departamento',p.dep)}${row('Carga horária',p.ch,esc(p.ch)+' h extensionistas')}${row('Vagas',p.vagas)}${row('Prazo',p.prazo)}${row('Modalidade',p.mod)}${row('Local',p.local)}${row('Dias e horários',p.quando)}${row('Público',p.publico)}${row('Coordenação',p.coord)}${row('Contato',p.contato,isMail(p.contato)?`<span>${esc(p.contato)}</span><button class="copy" type="button" data-copy="${esc(p.contato)}">copiar</button>`:linkOut(p.contato))}${row('Projeto',p.site,linkOut(p.site))}${row('Atualizado em',p.atual)}</dl>`;
+  if(p.link&&/^https?:\/\//i.test(p.link)&&s.k==='open')h+=`<a class="btn primary" href="${esc(p.link)}" target="_blank" rel="noopener">Inscrever-se</a>`;
+  $('#d-body').innerHTML=h;$('#drawer').hidden=false;$('#scrim').hidden=false;document.body.style.overflow='hidden';$('#d-close').focus();
+}
+function close(){if($('#drawer').hidden)return;$('#drawer').hidden=true;$('#scrim').hidden=true;document.body.style.overflow='';if(lastFocus)lastFocus.focus();}
+document.addEventListener('click',async e=>{
+  const c=e.target.closest('[data-copy]');if(c){try{await navigator.clipboard.writeText(c.dataset.copy);c.textContent='copiado';}catch(_){c.textContent='selecione e copie';}return;}
+  const b=e.target.closest('.pj');if(b)open(+b.dataset.i,b);
+});
+$('#d-close').addEventListener('click',close);$('#scrim').addEventListener('click',close);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+['#q','#f-area','#f-tipo','#f-dep','#f-mod','#f-open','#f-ended'].forEach(s=>$(s).addEventListener(s==='#q'?'input':'change',render));
+$('#clear').addEventListener('click',()=>{['#q','#f-area','#f-tipo','#f-dep','#f-mod'].forEach(s=>$(s).value='');$('#f-open').checked=false;render();});
+$('#count').textContent='Carregando ações de extensão…';
+renderNeed();
+loadData().then(()=>{fillFilters();render();});
+})();
+</script>
+<footer class="sitefoot"><div class="wrap"><span>Ferramenta independente feita por estudantes, sem vínculo oficial com a UTFPR. Confira sempre no Portal do Aluno.</span><span>Seus arquivos são lidos no seu navegador e não são enviados a servidor.</span></div></footer>
+</body>
+</html>

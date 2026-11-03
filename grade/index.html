@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Montar grade · UTFPR sem confusão</title>
+<meta name="description" content="Monte a grade do semestre na UTFPR Curitiba com as turmas abertas, sem conflitos de horário.">
+<meta name="theme-color" content="#0A0A0A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230A0A0A'/%3E%3Cg fill='%23C9F22C'%3E%3Crect x='42' y='14' width='16' height='72' rx='8'/%3E%3Crect x='42' y='14' width='16' height='72' rx='8' transform='rotate(60 50 50)'/%3E%3Crect x='42' y='14' width='16' height='72' rx='8' transform='rotate(120 50 50)'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,600;0,700;0,800;1,700;1,800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+<nav class="topnav" aria-label="Site"><div class="wrap in">
+  <a class="brand" href="/"><svg viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor"><rect x="41" y="4" width="18" height="92" rx="9"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(60 50 50)"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(120 50 50)"/></g></svg><span>UTFPR sem confusão</span><small>Curitiba</small></a>
+  <div class="navlinks"><a href="/">Início</a><a href="/historico/">Histórico</a><a href="/grade/" aria-current="page">Montar grade</a><a href="/extensao/">Extensão</a></div>
+</div></nav>
+<style>
+.g-hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.g-hero .wrap{padding-block:48px 40px;position:relative}
+.g-hero h1{font-family:var(--f-disp);font-style:italic;font-weight:800;text-transform:uppercase;font-size:clamp(36px,7vw,84px);letter-spacing:-.03em;line-height:.92;margin-top:16px}
+.g-hero h1 .sl{color:var(--yellow)}
+.g-hero .lead{color:var(--muted);max-width:60ch;margin-top:18px;font-size:16px}
+.g-hero .asterisk{color:var(--yellow);right:-60px;top:-50px;width:240px;height:240px}
+.soon{margin-top:24px;border:1px solid var(--yellow);background:var(--warn-bg);border-radius:6px;padding:16px;font-size:14.5px;max-width:70ch}
+.soon b{color:var(--yellow)}
+.mine{margin-top:28px}
+.mine h2{font-family:var(--f-disp);font-weight:700;font-size:18px;margin-bottom:10px}
+.mine ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:8px}
+.mine li{border:1px dashed #4A4A4A;border-radius:6px;padding:10px 12px;font-size:14px}
+.mine li span{display:block;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+</style>
+<header class="g-hero">
+  <svg class="asterisk" viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor"><rect x="41" y="4" width="18" height="92" rx="9"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(60 50 50)"/><rect x="41" y="4" width="18" height="92" rx="9" transform="rotate(120 50 50)"/></g></svg>
+  <div class="wrap">
+    <p class="eyebrow"><b style="color:var(--yellow)">Grade</b> . UTFPR . Curitiba .</p>
+    <h1><span class="sl">-</span>Montar grade<span class="sl">//</span></h1>
+    <p class="lead">Escolha as turmas abertas do semestre e veja a sua semana montada, com aviso de choque de horário. Se você já leu o seu histórico aqui, as disciplinas que faltam aparecem em destaque.</p>
+    <div class="soon"><b>Em construção.</b> Estamos conectando esta página às turmas abertas publicadas no Portal do Aluno. Enquanto isso, veja abaixo o que falta no seu último histórico.</div>
+    <div class="mine" id="mine"></div>
+  </div>
+</header>
+<script>
+(function(){let h=null;try{h=JSON.parse(localStorage.getItem('sc-historico')||'null');}catch(e){}
+const el=document.getElementById('mine');
+if(!h){el.innerHTML='<p class="lead" style="margin-top:0">Leia o seu histórico na página <a class="lnk" href="/historico/">Histórico</a> para ver aqui as disciplinas que faltam.</p>';return;}
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const p=(h.pend||[]);
+el.innerHTML=`<h2>Obrigatórias que faltam no seu histórico (${p.length})</h2><ul>${p.map(x=>`<li><span>${esc(x.c)}${x.p?' · '+x.p+'º período':''}${x.st==='cur'?' · cursando':''}</span>${esc(x.n)}</li>`).join('')}</ul>`;})();
+</script>
+<footer class="sitefoot"><div class="wrap"><span>Ferramenta independente feita por estudantes, sem vínculo oficial com a UTFPR. Confira sempre no Portal do Aluno.</span><span>Seus arquivos são lidos no seu navegador e não são enviados a servidor.</span></div></footer>
+</body>
+</html>

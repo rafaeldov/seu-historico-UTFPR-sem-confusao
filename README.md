@@ -1,11 +1,18 @@
-# Leitor de Histórico UTFPR
+# UTFPR sem confusão
 
-Página estática que lê o PDF do Histórico Escolar do Portal do Aluno da UTFPR no próprio navegador (pdf.js) e mostra progresso, pendências, mapa da matriz e todas as tentativas. Nenhum dado é enviado a servidor.
+Site estático para estudantes da UTFPR Curitiba.
 
-## Publicar na Vercel
+- `/` — Início
+- `/historico/` — leitor do PDF do Histórico Escolar (processado no navegador)
+- `/grade/` — montagem de grade do semestre (em construção)
+- `/extensao/` — projetos de extensão, lidos de uma planilha do Google Sheets
 
-```
-npx vercel --prod
-```
+## Configuração
 
-Ou importe este repositório em vercel.com/new (Framework: Other, sem build).
+Edite `assets/config.js` e cole em `extensaoCsv` o link da planilha publicada como CSV
+(Google Sheets → Arquivo → Compartilhar → Publicar na Web → Valores separados por vírgula).
+O arquivo `extensao/acoes-extensao.csv` traz as colunas esperadas e é usado enquanto a planilha não estiver conectada.
+
+## Publicação
+
+Cada commit na branch `main` é publicado pela Vercel.
